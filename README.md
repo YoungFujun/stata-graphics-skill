@@ -84,7 +84,9 @@ Each layer is necessary. Missing any one creates gaps in the workflow.
    When writing Stata graphics code—or when the task involves producing a figure,
    plot, or visual output from Stata estimation results—read
    ~/.claude/stata-graphics/SKILL.md for graphics syntax, options reference,
-   and routing to relevant files.
+   and routing to relevant files. This applies to both explicit graph requests
+   and implicit ones (e.g., "show the event study coefficients", "plot parallel
+   trends", "visualize the results").
    ```
 
 ### Build Status
@@ -200,7 +202,9 @@ This skill improves through use. If you find an error or add a new chart type:
    When writing Stata graphics code—or when the task involves producing a figure,
    plot, or visual output from Stata estimation results—read
    ~/.claude/stata-graphics/SKILL.md for graphics syntax, options reference,
-   and routing to relevant files.
+   and routing to relevant files. This applies to both explicit graph requests
+   and implicit ones (e.g., "show the event study coefficients", "plot parallel
+   trends", "visualize the results").
    ```
 
 ### 构建进度
