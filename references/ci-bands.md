@@ -1,6 +1,6 @@
 # ci-bands.md — Confidence Intervals and Error Bands in Stata
 
-Source: Stata 19 Graphics Reference Manual [G-2] and [G-3]; Session B of stata-graphics-skill.
+Source: Stata 19 Graphics Reference Manual [G-2] and [G-3]; Mitchell (2022) §2.7; Session B of stata-graphics-skill.
 
 ---
 
@@ -14,17 +14,36 @@ twoway <plottype> y1var y2var xvar [, options]
 
 `y1var` and `y2var` are the two bounds (upper/lower, in either order — Stata takes min/max internally). `xvar` is the x-axis variable.
 
-| Command | Visual form | Best for | Notes |
-|---------|------------|----------|-------|
-| `rcap` | I-beams (spikes + flat end caps) | Event study, coefficient plots | Economics standard; clean and legible |
-| `rspike` | Plain spikes (no caps) | Dense plots, minimalist style | Same as rcap but no horizontal end caps |
-| `rarea` | Filled shaded band | Continuous fit CI, smooth curves | Requires `sort`; draw before scatter |
-| `rcapsym` | Spikes + marker symbols at ends | Rarely used for CI | More suited to labeling than CI display |
-| `rbar` | Bars | Not recommended for CI | Visually heavy; suited to range bars, not CI |
+All 8 range plot types fall into two families (Mitchell 2022, §2.7):
+
+**Spike family** — each x value gets one vertical bar:
+
+| Command | Visual form | `sort` needed? | Best for |
+|---------|------------|----------------|----------|
+| `rcap` | Spike + flat caps at both ends (I-beam) | No | **Event study, coefficient plots** — economics standard |
+| `rspike` | Spike only, no caps | No | Dense plots, minimalist style |
+| `rcapsym` | Spike + marker symbols at ends | No | Rarely used for CI; suited to labeling |
+| `rbar` | Solid bar (rectangle) | No | Not recommended for CI; visually heavy |
+
+**Line/area family** — bounds drawn as two continuous lines or filled band:
+
+| Command | Visual form | `sort` needed? | Best for |
+|---------|------------|----------------|----------|
+| `rconnected` | Two lines + markers at each point | **Yes** | Rarely used for CI |
+| `rscatter` | Markers at both bounds, no lines | No | Rarely used for CI |
+| `rline` | Two lines, no markers | **Yes** | Rarely used for CI |
+| `rarea` | Filled shaded band between bounds | **Yes** | **Continuous fit CI, smooth curves** |
+
+Visual family relationships (Mitchell):
+- `rconnected` → remove lines → `rscatter`
+- `rconnected` → remove markers → `rline`
+- `rline` → fill the area → `rarea`
+- `rcap` → remove caps → `rspike`
+- `rcap` → replace caps with symbols → `rcapsym`
 
 **Quick decision rule:**
 - Discrete x (event time, coefficient index) → `rcap` or `rspike`
-- Continuous x (time series, regression fit) → `rarea`
+- Continuous x (regression fit CI, time-series band) → `rarea`
 - Want to label individual endpoints → `rcapsym`
 
 ---
@@ -283,7 +302,7 @@ See `graph-templates.md` for additional event study and coefficient plot templat
 
 | Pitfall | Symptom | Fix |
 |---------|---------|-----|
-| Forgot `sort` in `rarea` | Jagged / modern-art fill | Add `, sort` option |
+| Forgot `sort` in `rarea`/`rline`/`rconnected` | Jagged / modern-art fill | Add `, sort` option — required for any plot that connects points with lines; NOT needed for `rcap`, `rspike`, `rscatter` |
 | Wrong overlay order | Scatter points hidden under shading | Draw `rarea`/`rcap` first, `scatter` last |
 | `rcap` argument order confusion | Extra-long or zero-length spikes | Both `y1var y2var` are bounds; Stata takes min/max internally — order doesn't matter |
 | `rspike` mistaken for `rcap` | No end caps visible | Use `rcap` if you need visible caps |
