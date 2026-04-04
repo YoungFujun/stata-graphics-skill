@@ -97,8 +97,8 @@ Each layer is necessary. Missing any one creates gaps in the workflow.
 
 | File | Status | Description |
 |------|--------|-------------|
-| `estimation-to-graph.md` | ⬜ | Bridge: regression results → plottable data |
-| `graph-templates.md` | ⬜ | Ready-to-run templates (event study, coefplot, margins, etc.); grows via `/learn` |
+| `estimation-to-graph.md` | ✅ | Bridge: regression results → plottable data |
+| `graph-templates.md` | ✅ | Ready-to-run templates (event study, coefplot, margins, etc.); grows via `/learn` |
 | `twoway-syntax.md` | ⬜ | All twoway plottypes and overlay syntax |
 | `ci-bands.md` | ⬜ | rcap / rspike / rarea comparison + event study template |
 | `axes.md` | ⬜ | xlabel/ylabel, reference lines, dual y-axis |
@@ -221,8 +221,8 @@ This skill improves through use. If you find an error or add a new chart type:
 
 | 文件 | 状态 | 说明 |
 |------|------|------|
-| `estimation-to-graph.md` | ⬜ | 桥梁：回归结果 → 可画图数据 |
-| `graph-templates.md` | ⬜ | 即用代码模板（event study、coefplot、margins 等）；通过 `/learn` 持续扩充 |
+| `estimation-to-graph.md` | ✅ | 桥梁：回归结果 → 可画图数据 |
+| `graph-templates.md` | ✅ | 即用代码模板（event study、coefplot、margins 等）；通过 `/learn` 持续扩充 |
 | `twoway-syntax.md` | ⬜ | 所有 twoway 图类型与叠加语法 |
 | `ci-bands.md` | ⬜ | rcap/rspike/rarea 对比 + event study 模板 |
 | `axes.md` | ⬜ | xlabel/ylabel、参考线、双 y 轴 |
