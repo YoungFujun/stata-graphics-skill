@@ -43,6 +43,10 @@ Layer 1 — existing stata skill (dylantmoore/stata-skill)
 Layer 2 — estimation-to-graph.md  [bridge, built first]
   Knows how to extract stored results and reshape them into plottable data
 
+Layer 2b — graph-templates.md  [built alongside the bridge]
+  Ready-to-run code templates for common figure types (event study, coefplot,
+  csdid_plot, margins); grows over time via /learn from real-world examples
+
 Layer 3 — stata-graphics skill  [this repo]
   Knows graph style details: markers, colors, axes, schemes, CI methods, export
 ```
@@ -94,6 +98,7 @@ Each layer is necessary. Missing any one creates gaps in the workflow.
 | File | Status | Description |
 |------|--------|-------------|
 | `estimation-to-graph.md` | ⬜ | Bridge: regression results → plottable data |
+| `graph-templates.md` | ⬜ | Ready-to-run templates (event study, coefplot, margins, etc.); grows via `/learn` |
 | `twoway-syntax.md` | ⬜ | All twoway plottypes and overlay syntax |
 | `ci-bands.md` | ⬜ | rcap / rspike / rarea comparison + event study template |
 | `axes.md` | ⬜ | xlabel/ylabel, reference lines, dual y-axis |
@@ -119,8 +124,9 @@ Status: ⬜ Not started · 🔄 In progress · ✅ Complete
 
 This skill improves through use. If you find an error or add a new chart type:
 1. Fix or extend the relevant reference file
-2. Note the source and Stata version
-3. Open a PR or issue
+2. To add a new figure template from a real-world example, use the `/learn` skill and direct it to append to `graph-templates.md`
+3. Note the source and Stata version
+4. Open a PR or issue
 
 ---
 
@@ -159,6 +165,10 @@ This skill improves through use. If you find an error or add a new chart type:
 
 第二层 — estimation-to-graph.md（桥梁文件，最先建设）
   知道如何把存储结果转化为可画图的数据格式
+
+第二层b — graph-templates.md（与桥梁文件同期建设）
+  各类图形的完整即用代码模板（event study、coefplot、
+  csdid_plot、margins 等）；通过 /learn 从实际论文中持续扩充
 
 第三层 — stata-graphics skill（本项目）
   知道图的样式细节：marker、颜色、坐标轴、scheme、CI 画法、导出
@@ -212,6 +222,7 @@ This skill improves through use. If you find an error or add a new chart type:
 | 文件 | 状态 | 说明 |
 |------|------|------|
 | `estimation-to-graph.md` | ⬜ | 桥梁：回归结果 → 可画图数据 |
+| `graph-templates.md` | ⬜ | 即用代码模板（event study、coefplot、margins 等）；通过 `/learn` 持续扩充 |
 | `twoway-syntax.md` | ⬜ | 所有 twoway 图类型与叠加语法 |
 | `ci-bands.md` | ⬜ | rcap/rspike/rarea 对比 + event study 模板 |
 | `axes.md` | ⬜ | xlabel/ylabel、参考线、双 y 轴 |
@@ -237,5 +248,6 @@ This skill improves through use. If you find an error or add a new chart type:
 
 这个 skill 在使用中不断完善。如果你发现错误，或者新增了图类型：
 1. 修复或扩充对应的参考文件
-2. 注明来源和 Stata 版本
-3. 提交 PR 或 Issue
+2. 如需从实际论文/复现包中添加新模板，使用 `/learn` skill 并指定写入 `graph-templates.md`
+3. 注明来源和 Stata 版本
+4. 提交 PR 或 Issue
