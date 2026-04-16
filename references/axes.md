@@ -1,8 +1,9 @@
 # axes.md — Axis Control in Stata
 
-Source: Stata 19 Graphics Reference Manual [G-3] `axis_choice_options` (pp.472-476),
-`axis_label_options` (pp.477-493), `axis_options` (pp.494-495),
-`axis_scale_options` (pp.496-503), `axis_title_options` (pp.504-508).
+Source: Mitchell (2022) Ch.8; Stata 19 Graphics Reference Manual [G-3]
+`axis_choice_options` (pp.472-476), `axis_label_options` (pp.477-493),
+`axis_options` (pp.494-495), `axis_scale_options` (pp.496-503),
+`axis_title_options` (pp.504-508).
 
 ---
 
@@ -118,6 +119,17 @@ scatter y x, ylabel(0 "Ref", add custom labcolor(red))
 // Grid lines on y-axis
 twoway line y x, ylabel(, grid glcolor(gs14) glpattern(solid))
 ```
+
+### 2.6 Practical heuristics from Mitchell
+
+Mitchell's value here is mostly design guidance rather than extra syntax:
+
+- When an axis needs many labels, first reduce density if possible. If the labels must stay dense, `angle(45)` is often the cleanest compromise:
+  ```stata
+  scatter workers2 faminc, xlabel(15000(1000)30000, angle(45))
+  ```
+- Use `angle(90)` more cautiously. It saves space, but usually slows reading compared with horizontal or 45-degree labels.
+- For publication figures, axis titles should normally be visually larger than axis labels. If you need exact sizing, coordinate `xtitle()/ytitle()` and `xlabel()/ylabel(), labsize()`; see [schemes-regions.md](./schemes-regions.md) for sizing strategy.
 
 ---
 
@@ -284,6 +296,7 @@ twoway (scatter gnp year) (scatter r year, yaxis(2)), ///
 
 - Each individual plot may have at most one x scale and one y scale.
 - Three or more y-axes stack on the same side and become difficult to read; avoid if possible.
+- In dual-axis graphs, keep axis targeting consistent across all related options. If a plot uses `xaxis(2)` or `yaxis(2)`, any axis-specific labels, titles, reference lines, or annotations tied to that plot should usually target the same axis number.
 
 ---
 
@@ -393,6 +406,18 @@ scatter lexp gnppc, xscale(log)     // x labels: 1000, 10000, ...
 // gen log_x = log(x) then plot: labels show log values (6.9, 9.2, ...)
 // Readers must back-transform mentally — usually inferior to xscale(log)
 ```
+
+### Trap 7 — Dense labels: rotating should not be your first reflex
+
+```stata
+// Often better: reduce label count first
+twoway line y date, tlabel(01jan2010(2)01jan2020)
+
+// If dense labeling is substantively necessary, then rotate
+twoway line y date, tlabel(01jan2010(1)01jan2020, angle(45))
+```
+
+Mitchell's examples consistently treat rotation as a readability fix, not as a substitute for selecting fewer, better labels.
 
 ---
 
