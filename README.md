@@ -146,12 +146,11 @@ AI 会：
 3. 为每个非常规选项添加注释说明
 4. 将模板追加到 `graph-templates.md`
 
-**示例**：下图来自 Huang & Zhang (2021)，AEJ: Applied，展示了按性别、教育程度、收入水平分组的异质性回归系数（横向系数图，三个子面板，分组标签直接标注在系数点旁）。
+**示例**：下图来自 Huang & Zhang (2021)，*AEJ: Applied*，13(2)，Figure 3 Panel B，展示了按性别、教育程度、收入水平分组的异质性回归系数——横向系数图，三个子面板，分组标签直接标注在系数点旁。
 
-> 将论文图片保存为 `assets/figure3_panel_b.png` 后可在此处显示：
-> `![Huang & Zhang 2021, Figure 3 Panel B](assets/figure3_panel_b.png)`
+![Huang & Zhang 2021, Figure 3 Panel B](assets/figure3_panel_b.png)
 
-通过分析此图的源代码，AI 提炼出如下通用技法并写入了 `graph-templates.md`（Section 6A）：
+通过分析此图的源代码，AI 提炼出以下通用技法并写入了 `graph-templates.md`（Section 6A）：
 
 | 技法 | 说明 |
 |------|------|
@@ -161,6 +160,76 @@ AI 会：
 | `yscale(off)` + `ylabel(... , noticks)` | 隐藏所有 y 轴数字标签，同时保留坐标结构供 `text()` 定位 |
 | `mlabp(12)` | 将组标签置于标记点正上方（12 点钟方向）；`hori` 状态下显示在点的斜上方 |
 | `text(y x "...", place(e))` | 面板标题锚定到空行的 y 坐标和 x 轴左端；`place(e)` 使文字向右展开 |
+
+以下是 AI 提炼后写入 `graph-templates.md` 的通用模板（变量名和数值均已泛化）：
+
+```stata
+* ─── Step 1: 分组回归，将结果存为 scalar ────────────────────────────────────
+* areg outcome treat controls if condition_A1, a(fe_var) vce(cluster cluster_var)
+* scalar b_A1  = _b[treat]
+* scalar se_A1 = _se[treat]
+* ... 每个子组重复一次
+
+* ─── Step 2: 构建画图数据集 ──────────────────────────────────────────────────
+* 行布局（示例：3 个面板 / 7 个子组 / 4 个空行分隔 = 11 行）：
+*   Row  1 → 空行（Panel A 标题行）
+*   Row  2 → Panel A 组 1
+*   Row  3 → Panel A 组 2
+*   Row  4 → 空行（Panel B 标题行）
+*   Row  5 → Panel B 组 1  ...  Row 10 → Panel C 组 2
+*   Row 11 → 底部空行（可选）
+
+preserve
+clear
+set obs 11
+
+gen coef  = .
+gen se    = .
+gen label = ""
+
+replace coef = b_A1  in 2  ;  replace se = se_A1  in 2
+replace coef = b_A2  in 3  ;  replace se = se_A2  in 3
+replace coef = b_B1  in 5  ;  replace se = se_B1  in 5
+replace coef = b_B2  in 6  ;  replace se = se_B2  in 6
+replace coef = b_B3  in 7  ;  replace se = se_B3  in 7
+replace coef = b_C1  in 9  ;  replace se = se_C1  in 9
+replace coef = b_C2  in 10 ;  replace se = se_C2  in 10
+
+replace label = "Group A1" in 2  ;  replace label = "Group A2" in 3
+replace label = "Group B1" in 5  ;  replace label = "Group B2" in 6
+replace label = "Group B3" in 7
+replace label = "Group C1" in 9  ;  replace label = "Group C2" in 10
+
+* ─── Step 3: 计算 CI 与 y 轴变量 ────────────────────────────────────────────
+gen hi = coef + 1.96 * se
+gen lo = coef - 1.96 * se
+
+gen n = _n
+replace n = -n    // 取反：Row 1 → y=-1（顶部），Row 11 → y=-11（底部）
+
+* ─── Step 4: 绘图 ────────────────────────────────────────────────────────────
+twoway ///
+    (scatter n coef, ///
+        mlabel(label) mlabp(12) mlabsize(small) ///
+        msymbol(O) mcolor(green) mfcolor(green) msize(small)) ///
+    (rcap hi lo n, lp(dash) lcolor(red)), ///
+    hori ///
+    xline(0, lp(dash) lcolor(red)) ///
+    xlabel(-0.1(0.1)0.6, grid) ///
+    xscale(alt) ///              // x 轴移至顶部
+    yscale(off) ///              // 隐藏 y 轴
+    ylabel(-1 " " -4 " " -8 " ", noticks) ///   // 空行位置保留坐标结构
+    ytitle("") ///
+    xtitle("Coefficient and 95% CIs in different samples") ///
+    text(-1  -0.1 "Panel A: [描述]", place(e) size(small)) ///
+    text(-4  -0.1 "Panel B: [描述]", place(e) size(small)) ///
+    text(-8  -0.1 "Panel C: [描述]", place(e) size(small)) ///
+    legend(label(1 "Coefficient") label(2 "95% CI") ///
+        col(1) ring(0) pos(1) size(small)) ///
+    graphregion(color(white))
+
+restore
+```
 
 #### 仅有图片时
 
@@ -176,7 +245,7 @@ AI 会：
 - 具体数值参数（xlabel 范围、text() 坐标）
 - 罕见选项的存在（e.g., `xscale(alt)`）
 
-因此，图片 + 源代码的组合可以提炼出精度更高的通用模板。
+因此，**图片 + 源代码的组合**可以提炼出精度更高的通用模板。
 
 ### 构建进度
 
@@ -349,10 +418,9 @@ The AI will:
 3. Annotate each non-standard option with an explanation
 4. Append the template to `graph-templates.md`
 
-**Example:** The figure below is from Huang & Zhang (2021), *AEJ: Applied*, showing heterogeneity coefficients by gender, education, and income level — a horizontal coefficient plot with three labeled sub-panels.
+**Example:** The figure below is from Huang & Zhang (2021), *AEJ: Applied*, 13(2), Figure 3 Panel B — heterogeneity coefficients by gender, education, and income level: a horizontal coefficient plot with three labeled sub-panels, group labels annotated directly on the dots.
 
-> Save the paper figure as `assets/figure3_panel_b.png` to display it here:
-> `![Huang & Zhang 2021, Figure 3 Panel B](assets/figure3_panel_b.png)`
+![Huang & Zhang 2021, Figure 3 Panel B](assets/figure3_panel_b.png)
 
 From the replication code, the AI extracted the following techniques into `graph-templates.md` (Section 6A):
 
@@ -364,6 +432,71 @@ From the replication code, the AI extracted the following techniques into `graph
 | `yscale(off)` + `ylabel(... , noticks)` | Suppresses all numeric y-axis labels while preserving coordinate structure for `text()` |
 | `mlabp(12)` | Places group labels at the 12 o'clock position (above the marker) |
 | `text(y x "...", place(e))` | Panel headers anchored to spacer row y-positions and the leftmost x value |
+
+The generalized template written to `graph-templates.md`:
+
+```stata
+* ─── Step 1: Run subgroup regressions, store results as scalars ──────────────
+* areg outcome treat controls if condition_A1, a(fe_var) vce(cluster cluster_var)
+* scalar b_A1  = _b[treat]
+* scalar se_A1 = _se[treat]
+* ... repeat for each subgroup
+
+* ─── Step 2: Build plotting dataset ─────────────────────────────────────────
+* Row layout (example: 3 panels / 7 subgroups / 4 spacer rows = 11 rows)
+*   Row  1 → spacer (Panel A header)   Row  4 → spacer (Panel B header)
+*   Row  2 → Panel A, group 1          Row  5–7 → Panel B, groups 1–3
+*   Row  3 → Panel A, group 2          Row  8 → spacer (Panel C header)
+*                                       Row  9–10 → Panel C, groups 1–2
+
+preserve
+clear
+set obs 11
+
+gen coef  = .  ;  gen se = .  ;  gen label = ""
+
+replace coef = b_A1  in 2  ;  replace se = se_A1  in 2
+replace coef = b_A2  in 3  ;  replace se = se_A2  in 3
+replace coef = b_B1  in 5  ;  replace se = se_B1  in 5
+replace coef = b_B2  in 6  ;  replace se = se_B2  in 6
+replace coef = b_B3  in 7  ;  replace se = se_B3  in 7
+replace coef = b_C1  in 9  ;  replace se = se_C1  in 9
+replace coef = b_C2  in 10 ;  replace se = se_C2  in 10
+
+replace label = "Group A1" in 2  ;  replace label = "Group A2" in 3
+replace label = "Group B1" in 5  ;  replace label = "Group B2" in 6
+replace label = "Group B3" in 7
+replace label = "Group C1" in 9  ;  replace label = "Group C2" in 10
+
+* ─── Step 3: CI and y-axis variable ─────────────────────────────────────────
+gen hi = coef + 1.96 * se
+gen lo = coef - 1.96 * se
+gen n = _n
+replace n = -n    // negate: row 1 → y=-1 (top), row 11 → y=-11 (bottom)
+
+* ─── Step 4: Plot ────────────────────────────────────────────────────────────
+twoway ///
+    (scatter n coef, ///
+        mlabel(label) mlabp(12) mlabsize(small) ///
+        msymbol(O) mcolor(green) mfcolor(green) msize(small)) ///
+    (rcap hi lo n, lp(dash) lcolor(red)), ///
+    hori ///
+    xline(0, lp(dash) lcolor(red)) ///
+    xlabel(-0.1(0.1)0.6, grid) ///
+    xscale(alt) ///              // move x-axis to top
+    yscale(off) ///
+    ylabel(-1 " " -4 " " -8 " ", noticks) ///
+    ytitle("") ///
+    xtitle("Coefficient and 95% CIs in different samples") ///
+    text(-1  -0.1 "Panel A: [Description]", place(e) size(small)) ///
+    text(-4  -0.1 "Panel B: [Description]", place(e) size(small)) ///
+    text(-8  -0.1 "Panel C: [Description]", place(e) size(small)) ///
+    legend(label(1 "Coefficient") label(2 "95% CI") ///
+        col(1) ring(0) pos(1) size(small)) ///
+    graphregion(color(white))
+
+restore
+```
 
 #### With image only (no source code)
 
