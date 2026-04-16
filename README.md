@@ -103,8 +103,8 @@ Each layer is necessary. Missing any one creates gaps in the workflow.
 | `twoway-syntax.md` | ✅ | All twoway plottypes (43), overlay syntax, twoway_options, addplot(), recast() |
 | `axes.md` | ✅ | xlabel/ylabel, xscale/yscale, reference lines, dual y-axis |
 | `schemes-regions.md` | ✅ | Scheme comparison, graph regions, graph size, publication style |
-| `markers.md` | ⬜ | msymbol, msize, opacity |
-| `lines.md` | ⬜ | lpattern, lwidth, lcolor |
+| `markers.md` | ✅ | msymbol (all symbolstyles), msize, mcolor/mfcolor/mlcolor, markerstyle presets |
+| `lines.md` | ✅ | lpattern (named + formula), lwidth, lcolor, lstyle, connect_options |
 | `colors.md` | ⬜ | Named colors, RGB, opacity, palettes |
 | `labels-text.md` | ⬜ | title/note/text(), mlabel |
 | `legend.md` | ⬜ | legend() complete options |
@@ -227,8 +227,8 @@ This skill improves through use. If you find an error or add a new chart type:
 | `twoway-syntax.md` | ✅ | 全部 43 种 plottype、overlay 语法、twoway_options、addplot()、recast() |
 | `axes.md` | ✅ | xlabel/ylabel、xscale/yscale、参考线、双 y 轴 |
 | `schemes-regions.md` | ✅ | scheme 对比、图形区域、图形尺寸、发表级规范 |
-| `markers.md` | ⬜ | msymbol、msize、opacity |
-| `lines.md` | ⬜ | lpattern、lwidth、lcolor |
+| `markers.md` | ✅ | msymbol（完整 symbolstyle 表）、msize、mcolor/mfcolor/mlcolor、markerstyle 预设 |
+| `lines.md` | ✅ | lpattern（命名 + 公式语法）、lwidth、lcolor、lstyle、connect_options |
 | `colors.md` | ⬜ | 命名色、RGB、opacity、配色方案 |
 | `labels-text.md` | ⬜ | title/note/text()、mlabel |
 | `legend.md` | ⬜ | legend() 完整选项 |
