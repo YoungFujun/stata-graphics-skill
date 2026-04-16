@@ -111,7 +111,7 @@ Each layer is necessary. Missing any one creates gaps in the workflow.
 | `export-combine.md` | ✅ | saving/use/display workflow, graph combine alignment, graph export formats |
 | `graph-bar-box.md` | ✅ | Lightweight guide to bar/box/dot graphs for common economics use cases |
 | `by-over.md` | ✅ | Main F file: decision rules for over() vs by() vs graph combine |
-| `SKILL.md` | ⬜ | Routing table (written last) |
+| `SKILL.md` | ✅ | Routing table: task type → reference files, 10 high-frequency pitfalls, stata skill integration |
 
 Status: ⬜ Not started · 🔄 In progress · ✅ Complete
 
@@ -236,7 +236,7 @@ This skill improves through use. If you find an error or add a new chart type:
 | `export-combine.md` | ✅ | saving/use/display 工作流、graph combine 对齐、graph export 格式 |
 | `graph-bar-box.md` | ✅ | 轻量版：经济学常见 bar/box/dot 图 |
 | `by-over.md` | ✅ | F 的主文件：over() vs by() vs graph combine 的选择规则 |
-| `SKILL.md` | ⬜ | 路由表（最后写） |
+| `SKILL.md` | ✅ | 路由表：任务类型 → 参考文件、10 条高频陷阱、stata skill 联动说明 |
 
 状态：⬜ 未开始 · 🔄 进行中 · ✅ 已完成
 
