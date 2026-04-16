@@ -1,8 +1,8 @@
 # twoway-syntax.md — Stata twoway Core Syntax Reference
 
-Source: Stata 19 Graphics Reference Manual [G-2] graph twoway (p.201–208), scatter (p.403–424),
-line (p.297–303), and all plottype entries; [G-3] twoway_options (p.668), addplot_option (p.458),
-advanced_options (p.462). Session B2 of stata-graphics-skill.
+Source: Mitchell (2022) Ch.2; Stata 19 Graphics Reference Manual [G-2] graph twoway (p.201–208),
+scatter (p.403–424), line (p.297–303), and all plottype entries; [G-3] twoway_options (p.668),
+addplot_option (p.458), advanced_options (p.462). Session B2 of stata-graphics-skill.
 
 ---
 
@@ -98,6 +98,31 @@ twoway (scatter y x, ms(O) mcolor(blue))  ///
        (lfit y x, lcolor(red))            ///
        , title("My Graph") scheme(s2color)
 ```
+
+### Practical overlay heuristics from Mitchell
+
+Mitchell's Chapter 2 is most useful not for extra syntax, but for graph-construction logic:
+
+- If all series share the same x variable and the same plottype, start with the multiple-y shorthand:
+  ```stata
+  scatter y1 y2 x
+  line y1 y2 y3 x, sort
+  ```
+- If plottypes differ, if some layers need different `if` conditions, or if one layer needs very different options, switch to repeated parenthesized subcommands:
+  ```stata
+  twoway (scatter y x if group==0) (lfit y x if group==0)
+  ```
+- When observations conceal one another, Mitchell repeatedly favors three fixes before redesigning the graph:
+  - hollow markers: `msymbol(Oh Th)`
+  - smaller markers: `msize(small small)`
+  - transparency: `mcolor(%30 %30)` or similar
+- Overlay order is a design decision, not just syntax. Put background layers first and foreground layers last:
+  - CI bands, shaded regions, and bars first
+  - points, lines to highlight, and text-bearing layers later
+- If scatter layers and fitted lines should share the same color cycle, `pcycle()` is often the simplest solution:
+  ```stata
+  twoway (scatter y1 x) (scatter y2 x) (lfit y1 x) (lfit y2 x), pcycle(2)
+  ```
 
 ---
 
@@ -224,7 +249,7 @@ tsrline y1 y2, recast(rarea)               /* change to filled area */
 | Plottype | Syntax | Description | Key options |
 |----------|--------|-------------|-------------|
 | **histogram** | `histogram varname [, discrete density\|fraction\|frequency\|percent bins(#) width(#)]` | Histogram (as twoway plottype) | Use standalone `histogram` with `addplot()` for overlaying — `graph twoway histogram` lacks `addplot()` |
-| **kdensity** | `kdensity varname [, kernel(epanechnikov\|gaussian\|...) bwidth(#) n(#) area(#)]` | Kernel density estimate | `area(1)` scales area to 1; match y-axis units when overlaying on histogram |
+| **kdensity** | `kdensity varname [, kernel(epanechnikov\|gaussian\|...) bwidth(#) n(#) area(#)]` | Kernel density estimate | If no overlay is needed, standalone `kdensity` is usually preferable; `area(1)` scales area to 1; match y-axis units when overlaying on histogram |
 | **lowess** | `lowess y x [, bwidth(#) mean noweight logit adjust]` | Local linear smooth (lowess) | Default bandwidth 0.8; `mean` for running-mean smoothing |
 | **lpoly** | `lpoly y x [weight] [, kernel() bwidth(#) degree(#) n(#)]` | Local polynomial regression | Default degree(0) = local mean; more flexible than lowess |
 | **lpolyci** | `lpolyci y x [, stdp level(#) nofit fitplot() ciplot()]` | Local polynomial + CI | Same structure as lfitci |
@@ -351,7 +376,7 @@ sts graph, addplot(line S_hat _t, sort lpattern(dash))
 | Option | Purpose |
 |--------|---------|
 | `recast(newplottype)` | Re-interpret the current plottype as another plottype |
-| `pcycle(#)` | Number of sub-plots before pstyle cycles back to p1; default 15 |
+| `pcycle(#)` | Number of sub-plots before pstyle cycles back to p1; default 15; useful when paired scatter/fitted layers should reuse the same color cycle |
 | `yvarlabel("str1" "str2" ...)` | Override y-axis title strings (does not change variable label) |
 | `xvarlabel("str")` | Override x-axis title string |
 | `yvarformat(%fmt ...)` | Override display format for y variable(s) |
@@ -390,6 +415,8 @@ Recast is valid **within** a family group only:
 | **pstyle across plottypes** | `scatter y1 x \|\| line y2 x` auto-assigns p1/p2 — different colors | Use `pstyle(p1)` on y2's plot if you want matching style |
 | **cmissing default** | `cmissing(y)` by default — line *does not* break at missing values | Use `cmissing(n)` to break at missing observations |
 | **Overlay draw order** | Later sub-plots draw on top of earlier ones | Put background elements (CI bands, reference lines) first; foreground (scatter) last |
+| **Concealed overlapping markers** | Dense overlays can hide one series behind another | Try hollow markers, smaller markers, or partial opacity before splitting the graph |
+| **Wrong tool for histogram overlays** | `graph twoway histogram` is less flexible than standalone `histogram` | If you need overlay or `addplot()`, prefer standalone `histogram` |
 | **by() + total** | `by(..., total)` requires `sort` to have been specified | `scatter y x, sort || ..., by(g, total)` |
 
 ---
