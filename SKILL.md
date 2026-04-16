@@ -1,4 +1,4 @@
-# Stata Graphics Skill — Routing Table
+# Stata Graphics Skill - Routing Table
 
 Read this file first for any Stata graphics task. Use the routing table below to identify which reference files to consult before writing code. Do not write graphics code from memory alone.
 
