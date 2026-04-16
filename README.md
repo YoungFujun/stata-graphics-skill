@@ -106,7 +106,7 @@ Each layer is necessary. Missing any one creates gaps in the workflow.
 | `markers.md` | ✅ | msymbol (all symbolstyles), msize, mcolor/mfcolor/mlcolor, markerstyle presets |
 | `lines.md` | ✅ | lpattern (named + formula), lwidth, lcolor, lstyle, connect_options |
 | `colors.md` | ✅ | Named colors, RGB/CMYK/HSV/hex, opacity (%), intensity (*), palettes package |
-| `labels-text.md` | ⬜ | title/note/text(), mlabel |
+| `labels-text.md` | ✅ | title/subtitle/note/caption, text()/ttext(), textbox_options, mlabel/mlab* |
 | `legend.md` | ⬜ | legend() complete options |
 | `export-combine.md` | ⬜ | graph export formats, graph combine layouts |
 | `by-over.md` | ⬜ | by() vs over() vs graph combine |
@@ -230,7 +230,7 @@ This skill improves through use. If you find an error or add a new chart type:
 | `markers.md` | ✅ | msymbol（完整 symbolstyle 表）、msize、mcolor/mfcolor/mlcolor、markerstyle 预设 |
 | `lines.md` | ✅ | lpattern（命名 + 公式语法）、lwidth、lcolor、lstyle、connect_options |
 | `colors.md` | ✅ | 命名色、RGB/CMYK/HSV/hex、opacity (%)、intensity (*)、palettes 包 |
-| `labels-text.md` | ⬜ | title/note/text()、mlabel |
+| `labels-text.md` | ✅ | title/subtitle/note/caption、text()/ttext()、textbox_options、mlabel/mlab* |
 | `legend.md` | ⬜ | legend() 完整选项 |
 | `export-combine.md` | ⬜ | graph export 格式、graph combine 布局 |
 | `by-over.md` | ⬜ | by() vs over() vs graph combine |
