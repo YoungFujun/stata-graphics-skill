@@ -106,6 +106,8 @@ cp stata-graphics-skill/references/*.md ~/.claude/stata-graphics/references/
   trends", "visualize the results").
 ```
 
+> **关于 `~/.claude/CLAUDE.md`**：这是 Claude Code 的全局指令文件。如果该文件尚不存在，在 `~/.claude/` 目录下新建即可；如果已存在，将上方触发规则追加到文件末尾。
+
 ### 在 Codex CLI 上使用本 skill
 
 本 skill 的参考文件是标准 Markdown，可以移植到任何能读取本地文件的 AI 编程助手。以 OpenAI Codex CLI 为例：
@@ -129,6 +131,36 @@ graphics syntax, options, and routing to the relevant reference files.
 ```
 
 **适配其他助手：** 将文件路径换成对应助手的配置目录（如 `~/.gemini/`、`.cursor/` 等），在全局指令文件中添加相同触发规则即可。路由逻辑和参考文件本身不依赖任何特定助手。
+
+### 使用方法与验证
+
+**第一步：给 CC 一个作图任务**
+
+配置完成后，用自然语言向 Claude Code 描述作图需求，例如：
+
+```
+我刚跑完了 DiD 回归，现在想画一个 event study 图。
+e(b) 里存着各期系数，e(V) 是方差矩阵，
+时间窗口是 -4 到 4，以 -1 期为基准期。帮我写 Stata 代码。
+```
+
+**第二步：观察 AI 的行为变化**
+
+Skill 生效时，CC 在动手写代码之前会先说明它将查阅哪些参考文件，例如：
+
+> "我将先读取 `estimation-to-graph.md` 和 `ci-bands.md`，了解系数提取方式和置信区间画法，再生成代码。"
+
+相比之下，没有 skill 时 CC 会直接输出代码，且容易在 `rcap` 参数顺序、`yaxis()` 放置位置等细节上出错。
+
+**快速验证 skill 是否生效：**
+
+在 CC 中输入：
+
+```
+帮我画一个 event study 图，先告诉我你打算查阅哪些参考文件，暂时不要写代码。
+```
+
+若 CC 列出 `estimation-to-graph.md`、`ci-bands.md` 等文件名，说明 skill 已正常加载。若 CC 直接写代码而未提及参考文件，请检查 `~/.claude/CLAUDE.md` 是否保存正确，触发规则是否完整添加。
 
 ### 从实际论文学习模板
 
@@ -379,6 +411,8 @@ cp stata-graphics-skill/references/*.md ~/.claude/stata-graphics/references/
   trends", "visualize the results").
 ```
 
+> **About `~/.claude/CLAUDE.md`:** This is Claude Code's global instruction file. If it does not yet exist, create it in the `~/.claude/` directory. If it already exists, append the trigger rule above to the end of the file.
+
 ### Using with Codex CLI
 
 The reference files are plain Markdown and portable to any AI coding assistant that can read local files. For OpenAI Codex CLI:
@@ -401,6 +435,36 @@ graphics syntax, options, and routing to the relevant reference files.
 ```
 
 **For other assistants:** Replace the config path with your assistant's equivalent directory (e.g., `~/.gemini/`, `.cursor/`). The routing logic and reference files themselves do not depend on any specific assistant.
+
+### Usage and Verification
+
+**Step 1: Give CC a graphics task**
+
+After installation, describe your task in natural language, for example:
+
+```
+I just ran a DiD regression and want to plot an event study.
+e(b) holds the period coefficients, e(V) is the variance matrix,
+time window is -4 to 4, with period -1 as the omitted baseline. Write the Stata code.
+```
+
+**Step 2: Watch for changed behavior**
+
+When the skill is active, CC will name the reference files it plans to consult *before* writing any code:
+
+> "I'll first read `estimation-to-graph.md` and `ci-bands.md` to check the coefficient extraction workflow and CI plotting options, then generate the code."
+
+Without the skill, CC writes code immediately — and is prone to silent errors such as reversed `rcap` argument order or misplaced `yaxis()` options.
+
+**Quick verification:**
+
+Ask CC:
+
+```
+I need an event study plot. Before writing any code, tell me which reference files you plan to consult.
+```
+
+If CC lists files such as `estimation-to-graph.md` and `ci-bands.md`, the skill is loaded correctly. If CC writes code without mentioning any reference files, check that `~/.claude/CLAUDE.md` is saved and the trigger rule was appended in full.
 
 ### Learning from Real-World Examples
 
