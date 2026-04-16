@@ -107,8 +107,8 @@ Each layer is necessary. Missing any one creates gaps in the workflow.
 | `lines.md` | ✅ | lpattern (named + formula), lwidth, lcolor, lstyle, connect_options |
 | `colors.md` | ✅ | Named colors, RGB/CMYK/HSV/hex, opacity (%), intensity (*), palettes package |
 | `labels-text.md` | ✅ | title/subtitle/note/caption, text()/ttext(), textbox_options, mlabel/mlab* |
-| `legend.md` | ⬜ | legend() complete options |
-| `export-combine.md` | ⬜ | graph export formats, graph combine layouts |
+| `legend.md` | ✅ | legend() contents vs location, order/label/lastlabel, by()-specific rules |
+| `export-combine.md` | ✅ | saving/use/display workflow, graph combine alignment, graph export formats |
 | `by-over.md` | ⬜ | by() vs over() vs graph combine |
 | `SKILL.md` | ⬜ | Routing table (written last) |
 
@@ -231,8 +231,8 @@ This skill improves through use. If you find an error or add a new chart type:
 | `lines.md` | ✅ | lpattern（命名 + 公式语法）、lwidth、lcolor、lstyle、connect_options |
 | `colors.md` | ✅ | 命名色、RGB/CMYK/HSV/hex、opacity (%)、intensity (*)、palettes 包 |
 | `labels-text.md` | ✅ | title/subtitle/note/caption、text()/ttext()、textbox_options、mlabel/mlab* |
-| `legend.md` | ⬜ | legend() 完整选项 |
-| `export-combine.md` | ⬜ | graph export 格式、graph combine 布局 |
+| `legend.md` | ✅ | legend() 的 contents/location、order/label/lastlabel、by() 特殊规则 |
+| `export-combine.md` | ✅ | saving/use/display 工作流、graph combine 对齐、graph export 格式 |
 | `by-over.md` | ⬜ | by() vs over() vs graph combine |
 | `SKILL.md` | ⬜ | 路由表（最后写） |
 
