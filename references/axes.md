@@ -1,263 +1,261 @@
-# axes.md — 坐标轴完整控制
+# axes.md — Axis Control in Stata
 
-来源：g.pdf [G-3] `axis_choice_options`（pp.472-476）、`axis_label_options`（pp.477-493）、
-`axis_options`（pp.494-495）、`axis_scale_options`（pp.496-503）、`axis_title_options`（pp.504-508）
-
----
-
-## 选项族总览
-
-坐标轴相关选项分为四族，均属于 **twoway-level 选项**（放在命令末尾，所有 plot 括号之外），
-但 `yaxis()`/`xaxis()` 是例外——见第五节。
-
-| 选项族 | 控制内容 |
-|--------|---------|
-| `axis_label_options` | 刻度值与标签（xlabel/ylabel 等） |
-| `axis_scale_options` | 轴的缩放、范围、外观线条（xscale/yscale） |
-| `axis_title_options` | 轴标题文字（xtitle/ytitle） |
-| `axis_choice_options` | 多轴时指定 plot 使用哪条轴（yaxis/xaxis）—— **plot-level** |
-
-`xline()`/`yline()` 参考线也是 twoway-level 选项，见第六节。
+Source: Stata 19 Graphics Reference Manual [G-3] `axis_choice_options` (pp.472-476),
+`axis_label_options` (pp.477-493), `axis_options` (pp.494-495),
+`axis_scale_options` (pp.496-503), `axis_title_options` (pp.504-508).
 
 ---
 
-## 一、axis_label_options — 刻度与标签
+## 1. Overview: Four Option Groups
 
-### 1.1 完整语法
+All axis options are **twoway-level** — placed after the last plot parenthesis.
+Exception: `yaxis()`/`xaxis()` are **plot-level** options (see Section 4).
+
+| Option group | Controls |
+|--------------|---------|
+| `axis_label_options` | Tick placement and labels (`xlabel`, `ylabel`, etc.) |
+| `axis_scale_options` | Scale type, range, and axis line look (`xscale`, `yscale`) |
+| `axis_title_options` | Axis title text (`xtitle`, `ytitle`) |
+| `axis_choice_options` | Which axis a plot uses when multiple axes exist — **plot-level** |
+
+`xline()` / `yline()` (reference lines) are also twoway-level options; see Section 5.
+
+---
+
+## 2. axis_label_options — Ticks and Labels
+
+### 2.1 Syntax
 
 ```stata
 {y|x|t|z}{label|tick|mlabel|mtick}(rule_or_values [, suboptions])
 ```
 
-| 选项 | 说明 |
-|------|------|
-| `ylabel()` / `xlabel()` | 主刻度：画刻度线 + 标签 |
-| `ytick()` / `xtick()` | 主刻度：只画刻度线，不画标签 |
-| `ymlabel()` / `xmlabel()` | 次刻度：画次刻度线 + 标签 |
-| `ymtick()` / `xmtick()` | 次刻度：只画次刻度线 |
+| Option | Effect |
+|--------|--------|
+| `ylabel()` / `xlabel()` | Major ticks + labels |
+| `ytick()` / `xtick()` | Major ticks only (no labels) |
+| `ymlabel()` / `xmlabel()` | Minor ticks + labels |
+| `ymtick()` / `xmtick()` | Minor ticks only |
 
-### 1.2 规则（rule）速查
+### 2.2 Rules
 
-| rule | 示例 | 说明 |
-|------|------|------|
-| `##` | `#6` | 让 Stata 选约 6 个"好看"的值 |
-| `###` | `##10` | 在主刻度之间放 9 个次刻度（仅 mlabel/mtick 可用） |
-| `#(#)#` | `-4(.5)3` | 从 -4 到 3，步长 0.5 |
-| `minmax` | `minmax` | 只标最小值和最大值 |
-| `none` | `none` | 不标任何值 |
-| `.` | `.` | 跳过规则（等同于 none，但可与 add 连用） |
+| Rule | Example | Description |
+|------|---------|-------------|
+| `##` | `#6` | Ask Stata to choose ~6 "nice" values |
+| `###` | `##10` | Place 9 minor ticks between major ticks (mlabel/mtick only) |
+| `#(#)#` | `-4(.5)3` | From -4 to 3 in steps of 0.5 |
+| `minmax` | `minmax` | Label only the minimum and maximum values |
+| `none` | `none` | No labels and no ticks |
+| `.` | `.` | Skip the rule (same as `none` unless combined with `add`) |
 
-也可直接写 numlist：`ylabel(0 5 10 25 50)` 或混用规则与 numlist：`ylabel(0(5)50 75 100)`
+You can also specify a numlist directly: `ylabel(0 5 10 25 50)`
+or combine a rule with a numlist: `ylabel(0(5)50 75 100)`.
 
-### 1.3 字符串替换标签
+### 2.3 Text substitution for labels
 
 ```stata
-// 用文字替换数值刻度
+// Replace numeric values with custom text
 xlabel(1 "Jan" 2 "Feb" 3 "Mar" 4 "Apr" 5 "May" 6 "Jun" ///
        7 "Jul" 8 "Aug" 9 "Sep" 10 "Oct" 11 "Nov" 12 "Dec")
 
-// Event study 时间轴（t=-1 为基准期）
+// Event study time axis (t = -1 is the omitted period)
 xlabel(-4 "-4" -3 "-3" -2 "-2" -1 "Pre" 0 "Event" 1 "1" 2 "2" 3 "3")
 ```
 
-### 1.4 关键 suboptions 完整表
+### 2.4 Key suboptions
 
-| suboption | 说明 |
-|-----------|------|
-| `axis(#)` | 指定作用于第几条轴（多轴图时使用） |
-| `add` | **追加**到已有刻度，而非替换；见陷阱 1 |
-| `noticks` / `ticks` | 隐藏/强制显示刻度线 |
-| `nolabels` / `labels` | 隐藏/强制显示标签文字 |
-| `valuelabel` | 用变量的 value label 自动生成标签文字 |
-| `format(%fmt)` | 格式化数值显示（如 `format(%9.2f)`、`format(%td)`） |
-| `angle(anglestyle)` | 标签旋转角度：`angle(0)` 水平、`angle(90)` 垂直、`angle(45)` |
-| `alternate` | 标签交错排列（解决 x 轴密集拥挤） |
-| `norescale` | 新刻度值不触发轴范围自动扩展 |
-| `labsize(textsizestyle)` | 标签字号（如 `labsize(small)`、`labsize(vsmall)`） |
-| `labcolor(colorstyle)` | 标签颜色 |
-| `labgap(size)` | 标签与刻度线之间的间距 |
-| `labstyle(textstyle)` | 标签整体样式 |
-| `labelminlen(#)` | 标签最小宽度（空格补齐，用于对齐多图的 y 轴） |
-| `tlength(size)` | 刻度线长度 |
-| `tposition(outside\|crossing\|inside)` | 刻度线方向（默认 outside） |
-| `tlstyle()` / `tlwidth()` / `tlcolor()` | 刻度线样式/粗细/颜色 |
-| `custom` | 只对当前 add 的标签应用渲染选项（不影响其他标签） |
-| `grid` / `nogrid` | 在该轴的主刻度位置绘制/取消网格线 |
-| `gmin` / `gmax` / `nogmin` / `nogmax` | 控制是否在最小/最大刻度处画网格线 |
-| `gstyle(gridstyle)` | 网格线整体样式 |
-| `gextend` / `nogextend` | 网格线是否延伸到 plot region 的边距 |
-| `glstyle()` / `glwidth()` / `glcolor()` / `glpattern()` | 网格线具体属性 |
-| `tstyle(tickstyle)` | 刻度线 + 标签整体样式 |
+| Suboption | Description |
+|-----------|-------------|
+| `axis(#)` | Which axis this applies to (for multi-axis graphs) |
+| `add` | **Append** to existing ticks/labels rather than replace them; see Trap 1 |
+| `noticks` / `ticks` | Suppress / force ticks |
+| `nolabels` / `labels` | Suppress / force label text |
+| `valuelabel` | Map values through the variable's value label (automatic text substitution) |
+| `format(%fmt)` | Format numeric values (e.g. `format(%9.2f)`, `format(%td)`) |
+| `angle(anglestyle)` | Rotate labels: `angle(0)` horizontal, `angle(90)` vertical, `angle(45)` |
+| `alternate` | Offset adjacent labels to prevent overlap (useful for dense x-axis) |
+| `norescale` | Add ticks/labels outside the current axis range without rescaling the axis |
+| `labsize(textsizestyle)` | Label font size (e.g. `labsize(small)`, `labsize(vsmall)`) |
+| `labcolor(colorstyle)` | Label color |
+| `labgap(size)` | Gap between tick and label |
+| `labstyle(textstyle)` | Overall label text style |
+| `labelminlen(#)` | Minimum label width in characters (pad with spaces; useful for aligning combined graphs) |
+| `tlength(size)` | Tick length |
+| `tposition(outside\|crossing\|inside)` | Tick direction (default: `outside`) |
+| `tlstyle()` / `tlwidth()` / `tlcolor()` | Tick line style / thickness / color |
+| `custom` | Apply rendition suboptions only to labels added by the current `add` call |
+| `grid` / `nogrid` | Draw / suppress grid lines at major tick positions |
+| `gmin` / `gmax` / `nogmin` / `nogmax` | Control grid lines at the min/max tick values |
+| `gstyle(gridstyle)` | Overall grid style |
+| `gextend` / `nogextend` | Extend grid lines into the plot region margin |
+| `glstyle()` / `glwidth()` / `glcolor()` / `glpattern()` | Grid line style attributes |
+| `tstyle(tickstyle)` | Overall tick + label style |
 
-### 1.5 常用写法示例
+### 2.5 Examples
 
 ```stata
-// 基础：指定5个刻度
+// Approximately 5 ticks (Stata chooses values)
 scatter y x, ylabel(#5)
 
-// 精确范围：-0.2 到 0.4，步长 0.1
+// Exact range and step
 scatter y x, ylabel(-0.2(0.1)0.4)
 
-// 格式化 + 角度（大数字）
+// Format only — keep Stata's auto-chosen values
+scatter y x, ylabel(, format(%9.2f))
+
+// Formatted + angled (useful for large numbers)
 scatter y x, ylabel(, format(%12.0gc) angle(0))
 
-// x 轴标签交错（避免重叠）
+// Stagger x-axis labels to avoid overlap
 scatter y x, xlabel(, alternate)
 
-// 用 value label 自动生成标签
+// Map a numeric variable's value label to the axis
 scatter y cat_var, xlabel(1 2 3, valuelabel)
 
-// 追加单个特殊标签（不破坏默认标签）
-scatter y x, xlabel(0, add) ylabel(0 "Zero", add)
+// Append a special label without removing defaults
+scatter y x, ylabel(0 "Ref", add custom labcolor(red))
 
-// 仅修改格式，保留 Stata 自动选择的刻度值
-scatter y x, xlabel(, format(%9.2f))
-
-// 网格线（y 方向）
+// Grid lines on y-axis
 twoway line y x, ylabel(, grid glcolor(gs14) glpattern(solid))
 ```
 
 ---
 
-## 二、axis_scale_options — 轴缩放与外观
+## 3. axis_scale_options — Scale, Range, and Axis Line
 
-### 2.1 语法
+### 3.1 Syntax
 
 ```stata
 yscale(axis_suboptions)
 xscale(axis_suboptions)
-tscale(axis_suboptions)    // 时间轴（t 轴）
+tscale(axis_suboptions)    // time axis
 ```
 
-可简写：`ysc()` / `xsc()`，`range()` 可简写为 `r()`。
+Abbreviations: `ysc()` / `xsc()`; `range()` can be abbreviated `r()`.
 
-### 2.2 axis_suboptions 完整表
+### 3.2 Suboptions
 
-| suboption | 说明 |
-|-----------|------|
-| `axis(#)` | 指定作用于第几条轴 |
-| `log` / `nolog` | 对数刻度（自然对数）；轴标签显示原始单位 |
-| `reverse` / `noreverse` | 轴从大到小排列（倒序） |
-| `range(numlist)` | 扩展轴范围；**只扩展不收窄**，见陷阱 2 |
-| `off` / `on` | 完全隐藏/强制显示轴（含线、刻度、标签、标题） |
-| `noline` / `line` | 隐藏/强制显示轴线本身（刻度、标签、标题保留） |
-| `fill` | 配合 off 使用：隐藏轴线但保留空间 |
-| `alt` | 把轴移到对面（y 轴→右侧，x 轴→顶部） |
-| `fextend` | 轴线延伸穿过 plot region 及其边距（大多数 scheme 的默认） |
-| `extend` | 轴线延伸穿过 plot region |
-| `noextend` | 轴线不超出数据范围 |
-| `titlegap(size)` | 轴标题与刻度标签之间的间距 |
-| `outergap(size)` | 轴标题外侧的间距 |
-| `lstyle(linestyle)` | 轴线整体样式 |
-| `lcolor(colorstyle)` | 轴线颜色 |
-| `lwidth(linewidthstyle)` | 轴线粗细 |
-| `lpattern(linepatternstyle)` | 轴线图案（solid/dash/dot 等） |
+| Suboption | Description |
+|-----------|-------------|
+| `axis(#)` | Which axis to modify (multi-axis graphs) |
+| `log` / `nolog` | Natural-log scale; axis labels show original units |
+| `reverse` / `noreverse` | Run scale from max to min |
+| `range(numlist)` | Expand axis range to include specified values; **never narrows** — see Trap 2 |
+| `off` / `on` | Suppress / force the entire axis (line, ticks, labels, title all hidden) |
+| `noline` / `line` | Hide / force the axis line while keeping ticks, labels, and title |
+| `fill` | Allocate space for the axis even when `off` is specified |
+| `alt` | Move axis to opposite side (y-axis → right; x-axis → top) |
+| `fextend` | Extend axis line through plot region and its margins (default for most schemes) |
+| `extend` | Extend axis line through plot region only |
+| `noextend` | Do not extend axis line beyond data range |
+| `titlegap(size)` | Margin between axis title and tick labels |
+| `outergap(size)` | Margin outside the axis title |
+| `lstyle(linestyle)` | Overall axis line style |
+| `lcolor(colorstyle)` | Axis line color |
+| `lwidth(linewidthstyle)` | Axis line thickness |
+| `lpattern(linepatternstyle)` | Axis line pattern |
 
-### 2.3 常用写法
+### 3.3 Examples
 
 ```stata
-// 对数轴（标签显示原始值）
+// Log scale (labels show original values)
 scatter y x, xscale(log)
 
-// 对数轴（手动生成 log 变量后轴标签为 log 值，不推荐）
-// 推荐：直接用 xscale(log)，Stata 自动处理标签
-
-// 倒序 y 轴（如排名：1 在顶部）
+// Reversed y-axis (e.g. rank: 1 at top)
 scatter rank x, yscale(reverse)
 
-// 确保 y 轴包含 0（不会收窄范围）
+// Ensure y-axis includes 0 (does not clip data)
 scatter y x, yscale(range(0))
 
-// 完全隐藏 x 轴
+// Hide x-axis entirely
 scatter y x, xscale(off)
 
-// 隐藏轴线但保留刻度和标签
+// Hide axis line but keep ticks and labels
 scatter y x, yscale(noline)
 
-// y 轴移到右侧
+// Move y-axis to right side
 scatter y x, yscale(alt)
 
-// 缩小刻度标签与轴线之间的间距
+// Reduce gap between tick labels and axis title
 scatter y x, yscale(titlegap(1))
 ```
 
 ---
 
-## 三、axis_title_options — 轴标题
+## 4. axis_title_options — Axis Titles
 
-### 3.1 语法
+### 4.1 Syntax
 
 ```stata
 ytitle("string" ["string" ...] [, suboptions])
 xtitle("string" ["string" ...] [, suboptions])
-ttitle(...)    // 时间轴（ttitle 是 xtitle 的同义词）
+ttitle(...)    // synonym for xtitle() on time axes
 ```
 
-`axis_title` 支持 Unicode 字符和 SMCL 标签（数学符号、斜体等）。
+`string` supports Unicode characters and SMCL tags for math symbols, italics, etc.
 
-### 3.2 suboptions
+### 4.2 Suboptions
 
-| suboption | 说明 |
-|-----------|------|
-| `axis(#)` | 指定作用于第几条轴 |
-| `prefix` | 将文字添加到现有标题之前 |
-| `suffix` | 将文字添加到现有标题之后 |
-| *textbox_options* | 控制文字外观（color、size、margin 等），见 [G-3] textbox_options |
+| Suboption | Description |
+|-----------|-------------|
+| `axis(#)` | Which axis this title belongs to |
+| `prefix` | Prepend text to an existing title |
+| `suffix` | Append text to an existing title |
+| *textbox_options* | Control text appearance (color, size, margin, etc.); see [G-3] `textbox_options` |
 
-### 3.3 常用写法
+### 4.3 Examples
 
 ```stata
-// 基础用法
+// Basic
 scatter y x, ytitle("Coefficient") xtitle("Event time (quarters)")
 
-// 多行标题（每行一个字符串）
+// Multi-line title (one string per line)
 scatter y x, ytitle("Estimated" "treatment effect")
 
-// 留空标题（不显示轴标题）
+// Suppress axis title
 scatter y x, ytitle("")
 
-// 双轴图中第二条 y 轴单独命名
+// Independent titles for each y-axis in a dual-axis graph
 twoway (scatter gnp year, yaxis(1)) ///
        (scatter r year, yaxis(2)), ///
        ytitle("GNP (left)", axis(1)) ///
        ytitle("Interest rate (right)", axis(2))
 
-// 隐藏双轴图第二条轴的标题
+// Suppress the second y-axis title
 twoway ..., ytitle("", axis(2))
 
-// SMCL 标签：希腊字母、上下标
+// SMCL: Greek letters and subscripts
 scatter y x, ytitle("{&beta}{subscript:t}")
 ```
 
 ---
 
-## 四、axis_choice_options — 多轴绑定（⚠ plot-level 选项）
+## 5. axis_choice_options — Assigning Plots to Axes (⚠ plot-level)
 
-### 4.1 关键规则
+### 5.1 Critical rule: yaxis() / xaxis() are plot-level options
 
-`yaxis()` 和 `xaxis()` 是 **plot-level 选项**，必须放在各 plot 的括号内，
-**不能**放在 twoway 末尾。
+They must go **inside** each individual plot's parentheses, not at the twoway level.
 
 ```stata
-// ❌ 错误：yaxis(2) 放在 twoway 层
+// ❌ Wrong: yaxis(2) placed at the twoway level
 twoway (scatter gnp year) (scatter r year), yaxis(2)
 
-// ✅ 正确：yaxis(2) 放在第二个 plot 的括号内
+// ✅ Correct: yaxis(2) inside the relevant plot's parentheses
 twoway (scatter gnp year, yaxis(1)) (scatter r year, yaxis(2))
-// 或简写（yaxis(1) 是默认值，可省略）
+// yaxis(1) is the default, so this also works:
 twoway (scatter gnp year) (scatter r year, yaxis(2))
 ```
 
-### 4.2 语法
+### 5.2 Syntax
 
 ```stata
 yaxis(# [#...])    // 1 ≤ # ≤ 9
 xaxis(# [#...])    // 1 ≤ # ≤ 9
 ```
 
-### 4.3 双 y 轴：两种用途
+### 5.3 Two uses of dual y-axes
 
-**用途 A：两个变量用不同刻度**
+**Use A: Two variables on different scales**
 
 ```stata
 twoway (scatter gnp year) (scatter r year, yaxis(2)), ///
@@ -265,159 +263,156 @@ twoway (scatter gnp year) (scatter r year, yaxis(2)), ///
        ylabel(#5, axis(1)) ylabel(#5, axis(2))
 ```
 
-**用途 B：共享刻度但在两侧都显示（添加特殊标签）**
+**Use B: Shared scale, but label a special value on the opposite axis**
 
 ```stata
-// yaxis(1 2)：左右两侧显示相同的刻度，可在右侧轴添加特殊标签
+// yaxis(1 2): creates mirror axes sharing the same scale
+// Useful for annotating a specific value on the right-hand axis
 scatter bp concentration, yaxis(1 2) ylabel(120, axis(2) add)
 ```
 
-### 4.4 各轴独立设置 xlabel/ylabel
+### 5.4 Setting axis options for each axis independently
 
 ```stata
-// 为两条 y 轴分别设置标签
 twoway (scatter gnp year) (scatter r year, yaxis(2)), ///
-       ylabel(#5, axis(1))   ///
-       ylabel(0 5 10 15, axis(2))
+       ylabel(#5, axis(1))         ///
+       ylabel(0 5 10 15, axis(2))  ///
+       ylabel(#5, axis(1))
 ```
 
-### 4.5 注意
+### 5.5 Notes
 
-- 每个 plot 至多有一条 x 轴和一条 y 轴（不能用 `yaxis(1 2)` 同时绑定到两条不同刻度的轴）
-- 三条及以上 y 轴时，轴堆叠在同一侧（左侧），视觉上混乱，慎用
+- Each individual plot may have at most one x scale and one y scale.
+- Three or more y-axes stack on the same side and become difficult to read; avoid if possible.
 
 ---
 
-## 五、xline() / yline() — 参考线
+## 6. xline() / yline() — Reference Lines
 
-`xline()` 和 `yline()` 是 **twoway-level 选项**（不属于 axis_* 族），
-但与坐标轴密切相关，放置在命令末尾（plot 括号外）。
+These are **twoway-level options** (not part of the axis_* family),
+placed at the end of the command outside all plot parentheses.
 
-### 5.1 语法
+### 6.1 Syntax
 
 ```stata
 yline(numlist [, suboptions])
 xline(numlist [, suboptions])
 ```
 
-| suboption | 说明 |
-|-----------|------|
-| `lstyle(linestyle)` | 整体线条样式 |
-| `lcolor(colorstyle)` | 颜色 |
-| `lwidth(linewidthstyle)` | 粗细 |
-| `lpattern(linepatternstyle)` | 图案（solid/dash/dot/shortdash 等） |
-| `axis(#)` | 指定作用于第几条轴（双轴图中区分） |
+| Suboption | Description |
+|-----------|-------------|
+| `lstyle(linestyle)` | Overall line style |
+| `lcolor(colorstyle)` | Color |
+| `lwidth(linewidthstyle)` | Thickness |
+| `lpattern(linepatternstyle)` | Pattern (solid / dash / dot / shortdash, etc.) |
+| `axis(#)` | Which axis the reference line belongs to (dual-axis graphs) |
 
-### 5.2 常用写法
+### 6.2 Examples
 
 ```stata
-// 零参考线（event study 标配）
+// Zero reference line (standard for event study)
 twoway ..., yline(0, lcolor(gray) lpattern(dash))
 
-// 处理时点参考线
-twoway ..., xline(0, lcolor(black) lwidth(medthin) lpattern(solid))
+// Treatment-period marker
+twoway ..., xline(0, lcolor(black) lwidth(medthin))
 
-// 同时画两条参考线
+// Both axes
 twoway ..., yline(0, lcolor(gray)) xline(0, lcolor(gray))
 
-// 双 y 轴图中在第二条轴画参考线
+// Reference line on the second y-axis
 twoway ..., yline(0, axis(2) lcolor(red) lpattern(dash))
 
-// 多条参考线（numlist）
+// Multiple reference lines
 twoway ..., xline(-4 0 4, lcolor(gray) lpattern(shortdash))
 ```
 
 ---
 
-## 六、高频陷阱速查
+## 7. Common Traps
 
-### 陷阱 1：`add` 缺失导致自定义标签替换默认标签
+### Trap 1 — Missing `add` wipes out default labels
 
 ```stata
-// 目的：在已有默认刻度基础上，额外标注 0 点
-// ❌ 错误：直接写 ylabel(0) 会清空默认刻度，只剩 0 这一个标签
+// Goal: add a label at 0 without removing the auto-chosen ticks
+// ❌ Wrong: ylabel(0) clears all defaults; only 0 is labeled
 scatter y x, ylabel(0)
 
-// ✅ 正确：加 add，追加到默认刻度
+// ✅ Correct: use add to append
 scatter y x, ylabel(0, add)
 
-// ✅ 更常见：先指定主刻度规则，再追加特殊值
+// ✅ More common: specify the main rule, then append the special value
 scatter y x, ylabel(#5) ylabel(0 "Ref", add custom labcolor(red))
 ```
 
-### 陷阱 2：`range()` 只能扩展，不能收窄
+### Trap 2 — `range()` only expands, never narrows
 
 ```stata
-// ❌ 错误期望：只显示 x 在 10 到 50 之间的数据
-scatter y x, xscale(range(10 50))    // 不会截断数据，只扩展范围
+// ❌ Incorrect expectation: show only x between 10 and 50
+scatter y x, xscale(range(10 50))   // does not clip data; only expands range
 
-// ✅ 正确：用 if 过滤数据
+// ✅ Correct: filter data with if
 scatter y x if x >= 10 & x <= 50
 ```
 
-### 陷阱 3：`yaxis()`/`xaxis()` 是 plot-level 选项
+### Trap 3 — `yaxis()` / `xaxis()` must be plot-level, not twoway-level
 
 ```stata
-// ❌ 错误：放在 twoway 末尾
+// ❌ Wrong
 twoway (scatter y1 x) (scatter y2 x), yaxis(2)
 
-// ✅ 正确：放在具体 plot 括号内
+// ✅ Correct
 twoway (scatter y1 x) (scatter y2 x, yaxis(2))
 ```
 
-### 陷阱 4：`##N` 次刻度的"减一"规则
+### Trap 4 — Minor ticks: `##N` means N−1 intervals, not N
 
 ```stata
-// ##5 实际产生 4 个间隔刻度（Stata 将 5 理解为"等分数"，刻度数 = 5-1 = 4）
-ymtick(##5)    // → 在每两个主刻度之间放 4 个次刻度
+// ##5 produces 4 minor ticks between each pair of major ticks (not 5)
+// Stata interprets the number as the division count, then subtracts 1
+ymtick(##5)    // → 4 minor ticks per major interval
+xmtick(##10)   // → 9 minor ticks (≈ tenths)
 
-// ##10 实际产生 9 个次刻度（10-1=9）
-xmtick(##10)   // → 9 个次刻度（接近"十分之一"间隔）
-
-// 要精确控制，用 #(#)# 规则或 numlist 显式指定
+// For exact control, use #(#)# or an explicit numlist
 ```
 
-### 陷阱 5：axis_options 归属 twoway 层而非 plottype 层
+### Trap 5 — axis_options belong to twoway, not to individual plottypes
 
 ```stata
-// ✅ axis_options 是 twoway 的选项，放在所有 plot 括号外
-twoway (scatter y x) ///
-       (line y2 x), ///
-       ylabel(#5) xtitle("Time")    // ← 正确位置
+// ✅ Correct placement: axis_options after all plot parentheses
+twoway (scatter y x) (line y2 x), ylabel(#5) xtitle("Time")
 
-// 可以混写在 plot 括号内（twoway 会拉取），但显式归到 twoway 层更规范
-// yaxis()/xaxis() 是唯一必须在 plot 括号内的坐标轴选项
+// yaxis() / xaxis() are the only axis options that must go inside plot parentheses
 ```
 
-### 陷阱 6：`yscale(log)` 与手动生成 log 变量的区别
+### Trap 6 — `yscale(log)` vs. manually generating a log variable
 
 ```stata
-// yscale(log) 的优势：轴标签显示原始单位（如 1000, 10000, 100000）
-scatter lexp gnppc, xscale(log)    // x 轴标签 = 原始 gnppc 值
+// yscale(log): axis labels show original units (readable)
+scatter lexp gnppc, xscale(log)     // x labels: 1000, 10000, ...
 
-// 手动 gen log_x = log(x) 再画图，标签显示的是 log 值（如 6.9, 9.2, 11.5）
-// 读者需要心算换算回原始单位，通常不如 xscale(log) 直观
+// gen log_x = log(x) then plot: labels show log values (6.9, 9.2, ...)
+// Readers must back-transform mentally — usually inferior to xscale(log)
 ```
 
 ---
 
-## 七、发表级常用配置模板
+## 8. Publication Templates
 
-### Event study 图（完整坐标轴设置）
+### Event study (full axis setup)
 
 ```stata
 twoway (rcap hi lo time, lcolor(navy) lwidth(medium)) ///
        (scatter coef time, mcolor(navy) msize(medium) msymbol(circle)), ///
        yline(0, lcolor(gray) lpattern(dash) lwidth(thin)) ///
        xline(-1, lcolor(black) lwidth(thin) lpattern(shortdash)) ///
-       xlabel(-6(1)6, labels) ///
+       xlabel(-6(1)6) ///
        ylabel(-0.2(0.1)0.2, format(%9.2f) angle(0)) ///
        ytitle("Estimated coefficient") ///
        xtitle("Years relative to treatment") ///
        legend(off)
 ```
 
-### 双 y 轴图（系数 + 密度）
+### Dual y-axis (coefficient + density)
 
 ```stata
 twoway (scatter coef year, yaxis(1) mcolor(navy)) ///
@@ -430,7 +425,7 @@ twoway (scatter coef year, yaxis(1) mcolor(navy)) ///
        yline(0, axis(1) lcolor(gray) lpattern(shortdash))
 ```
 
-### 时间序列图（日期格式 x 轴）
+### Time-series with date x-axis
 
 ```stata
 twoway line y date, ///
