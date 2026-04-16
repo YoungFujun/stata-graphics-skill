@@ -418,3 +418,103 @@ twoway ///
     legend(label(1 "Control") label(2 "Treatment") rows(1)) ///
     graphregion(color(white))
 ```
+
+---
+
+## 6. Heterogeneity Analysis
+
+### 6A. Horizontal heterogeneity coefficient plot — multi-panel with manual dataset construction
+
+<!-- Source: Huang & Zhang (2021), AEJ: Applied, 13(2), 179–205, Figure 3 Panel B -->
+<!-- Scenario: display subgroup coefficients organized into labeled panels (e.g., by gender / education / income); no shared grouping variable across panels -->
+<!-- Key techniques listed below -->
+
+**Non-obvious techniques in this template:**
+
+1. **`replace n = -n`** — negating the row index makes the plot display top-to-bottom as listed; without this, row 1 appears at the bottom.
+2. **Empty rows as visual separators** — rows with missing `coef`/`se` render as blank gaps between panels; the same spacer row positions are used for `text()` panel headers.
+3. **`xscale(alt)`** — moves the x-axis from the default bottom position to the top of the horizontal chart; rarely used but produces the "axis at top" layout common in this style.
+4. **`yscale(off)` + `ylabel(positions, noticks)`** — suppresses all numeric y-axis content while keeping the axis structure intact so `text()` annotations are positioned correctly.
+5. **`mlabp(12)`** — places the group label at the 12 o'clock position (directly above the marker); with `hori`, this appears to the upper-right of each dot.
+6. **Panel headers via `text(y x "...", place(e))`** — anchor text to the spacer row y-position and the leftmost x value; `place(e)` left-aligns the text rightward from that point.
+
+```stata
+* ─── Step 1: Run subgroup regressions, store results as scalars ──────────────
+* Run a separate regression for each subgroup and capture _b[treat] / _se[treat]:
+
+* areg outcome treat controls if condition_A1, a(fe_var) vce(cluster cluster_var)
+* scalar b_A1  = _b[treat]
+* scalar se_A1 = _se[treat]
+* ... repeat for each subgroup
+
+* ─── Step 2: Build plotting dataset ─────────────────────────────────────────
+* Row layout (example: 3 panels / 7 subgroups / 4 spacer rows = 11 rows)
+*   Row  1 → spacer (Panel A header)
+*   Row  2 → Panel A, group 1
+*   Row  3 → Panel A, group 2
+*   Row  4 → spacer (Panel B header)
+*   Row  5 → Panel B, group 1
+*   Row  6 → Panel B, group 2
+*   Row  7 → Panel B, group 3
+*   Row  8 → spacer (Panel C header)
+*   Row  9 → Panel C, group 1
+*   Row 10 → Panel C, group 2
+*   Row 11 → bottom spacer (optional)
+
+preserve
+clear
+set obs 11
+
+gen coef  = .
+gen se    = .
+gen label = ""
+
+* Assign scalars to rows
+replace coef  = b_A1  in 2  ;  replace se = se_A1  in 2
+replace coef  = b_A2  in 3  ;  replace se = se_A2  in 3
+replace coef  = b_B1  in 5  ;  replace se = se_B1  in 5
+replace coef  = b_B2  in 6  ;  replace se = se_B2  in 6
+replace coef  = b_B3  in 7  ;  replace se = se_B3  in 7
+replace coef  = b_C1  in 9  ;  replace se = se_C1  in 9
+replace coef  = b_C2  in 10 ;  replace se = se_C2  in 10
+
+replace label = "Group A1"  in 2
+replace label = "Group A2"  in 3
+replace label = "Group B1"  in 5
+replace label = "Group B2"  in 6
+replace label = "Group B3"  in 7
+replace label = "Group C1"  in 9
+replace label = "Group C2"  in 10
+
+* ─── Step 3: CI and y-axis variable ─────────────────────────────────────────
+gen hi = coef + 1.96 * se
+gen lo = coef - 1.96 * se
+
+gen n = _n
+replace n = -n          // negate: row 1 → y = -1 (top), row 11 → y = -11 (bottom)
+
+* ─── Step 4: Plot ────────────────────────────────────────────────────────────
+* Adjust xlabel range, xline position, and text() coordinates to your data.
+
+twoway ///
+    (scatter n coef, ///
+        mlabel(label) mlabp(12) mlabsize(small) ///
+        msymbol(O) mcolor(green) mfcolor(green) msize(small)) ///
+    (rcap hi lo n, lp(dash) lcolor(red)), ///
+    hori ///
+    xline(0, lp(dash) lcolor(red)) ///
+    xlabel(-0.1(0.1)0.6, grid) ///
+    xscale(alt) ///
+    yscale(off) ///
+    ylabel(-1 " " -4 " " -8 " ", noticks) ///
+    ytitle("") ///
+    xtitle("Coefficient and 95% CIs in different samples") ///
+    text(-1  -0.1 "Panel A: [Description]", place(e) size(small)) ///
+    text(-4  -0.1 "Panel B: [Description]", place(e) size(small)) ///
+    text(-8  -0.1 "Panel C: [Description]", place(e) size(small)) ///
+    legend(label(1 "Coefficient") label(2 "95% CI") ///
+        col(1) ring(0) pos(1) size(small)) ///
+    graphregion(color(white))
+
+restore
+```
