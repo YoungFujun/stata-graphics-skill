@@ -109,7 +109,8 @@ Each layer is necessary. Missing any one creates gaps in the workflow.
 | `labels-text.md` | ✅ | title/subtitle/note/caption, text()/ttext(), textbox_options, mlabel/mlab* |
 | `legend.md` | ✅ | legend() contents vs location, order/label/lastlabel, by()-specific rules |
 | `export-combine.md` | ✅ | saving/use/display workflow, graph combine alignment, graph export formats |
-| `by-over.md` | ⬜ | by() vs over() vs graph combine |
+| `graph-bar-box.md` | ⬜ | Lightweight guide to bar/box/dot graphs for common economics use cases |
+| `by-over.md` | ⬜ | Main F file: decision rules for over() vs by() vs graph combine |
 | `SKILL.md` | ⬜ | Routing table (written last) |
 
 Status: ⬜ Not started · 🔄 In progress · ✅ Complete
@@ -233,7 +234,8 @@ This skill improves through use. If you find an error or add a new chart type:
 | `labels-text.md` | ✅ | title/subtitle/note/caption、text()/ttext()、textbox_options、mlabel/mlab* |
 | `legend.md` | ✅ | legend() 的 contents/location、order/label/lastlabel、by() 特殊规则 |
 | `export-combine.md` | ✅ | saving/use/display 工作流、graph combine 对齐、graph export 格式 |
-| `by-over.md` | ⬜ | by() vs over() vs graph combine |
+| `graph-bar-box.md` | ⬜ | 轻量版：经济学常见 bar/box/dot 图 |
+| `by-over.md` | ⬜ | F 的主文件：over() vs by() vs graph combine 的选择规则 |
 | `SKILL.md` | ⬜ | 路由表（最后写） |
 
 状态：⬜ 未开始 · 🔄 进行中 · ✅ 已完成
