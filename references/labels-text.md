@@ -50,6 +50,8 @@ l1title() l2title() r1title() r2title()
 ```
 
 These are rarely needed. For axis titles, prefer `xtitle()` / `ytitle()`; see [axes.md](./axes.md).
+Also note: `position()` is **not** allowed with `t1title()` / `t2title()` / `b1title()` / `b2title()` /
+`l1title()` / `l2title()` / `r1title()` / `r2title()`.
 
 ### 2.2 Default roles
 
@@ -75,7 +77,20 @@ If `title()` feels too large, using `subtitle()` alone is often cleaner.
 
 `title()`, `subtitle()`, `note()`, and `caption()` are **merged-explicit**. Repeated options are combined deliberately rather than last-one-wins.
 
-### 2.4 Multi-line titles and quotes
+### 2.4 Prefix and suffix
+
+`prefix` and `suffix` add separate lines before or after an existing title of the same type.
+
+```stata
+// Existing title + appended line
+scatter y x, title("Main title") title("Second line", suffix)
+
+// Existing note + prepended line
+scatter y x, note("Source: Authors' calculations") ///
+             note("Sample restricted to balanced panel", prefix)
+```
+
+### 2.5 Multi-line titles and quotes
 
 ```stata
 // Multi-line title: one quoted string per line
@@ -88,7 +103,7 @@ scatter y x, subtitle("Smaller main title")
 scatter y x, title(`"A "quoted" title"' )
 ```
 
-### 2.5 Placement with position() and ring()
+### 2.6 Placement with position() and ring()
 
 `position()` follows clock positions around the plot region:
 
@@ -111,7 +126,7 @@ scatter y x, title("My title", position(7))
 scatter y x, title("Inside plot", position(1) ring(0))
 ```
 
-### 2.6 Spanning
+### 2.7 Spanning
 
 By default, title-related text usually aligns to the **plot region**, not the full graph width.
 `span` switches alignment to the full graph area.
@@ -133,7 +148,7 @@ scatter y x, title("Main title", span) ///
 - Notes/captions that should align with the full graph, not just the plot area
 - Multi-panel layouts where consistent left edge alignment matters
 
-### 2.7 Examples
+### 2.8 Examples
 
 ```stata
 // Standard economics figure title + source note
@@ -202,6 +217,8 @@ placement(compassdirstyle)
 | `linegap(size)` | Distance between lines |
 | `width(size)` / `height(size)` | Override auto-computed box dimensions |
 
+`orientation(vertical)` reads bottom-to-top; `orientation(rvertical)` reads top-to-bottom.
+
 ### 3.3 Box and border options
 
 | Option | Description |
@@ -233,6 +250,7 @@ caption("My caption", ring(0) position(7) bmargin(2 0 2 0))
 ```
 
 Use `margin()` when the box looks cramped. Use `bmargin()` when the text box needs to be shifted inside the space where it is already being placed.
+For rotated textboxes, left/right/top/bottom margins refer to the margins **before rotation**.
 
 ### 3.5 Justification is not placement
 
@@ -292,6 +310,8 @@ ttext(y t "text" ["text" ...] [ y t "text" ... ] [, suboptions])
 
 `text()` and `ttext()` are **merged-implicit** and may be repeated.
 
+Repeated `text()` calls are evaluated separately, so different annotation boxes can use different styles.
+
 Where suboptions are:
 
 | Suboption | Description |
@@ -337,6 +357,11 @@ scatter y x, text(7 11 "My text", placement(e))
 
 // Centered below the point
 scatter y x, text(7 11 "My text", placement(s))
+
+// Repeated text() with different styling
+scatter y x, ///
+    text(7 11 "Point A", placement(e)) ///
+    text(9 14 "Point B", placement(sw) box fcolor(gs15))
 ```
 
 ### 4.4 Typical use: annotate a few important points
@@ -407,16 +432,19 @@ mlabsuffix(text)
 ```
 
 These options are **rightmost**. With `scatter`, style lists are often allowed.
+When lists are allowed, `mlabel()` may take a `varlist` rather than a single variable.
 
 ### 5.2 Core options
 
 | Option | Description |
 |--------|-------------|
 | `mlabel(varname)` | Variable supplying label text, usually string |
+| `mlabstyle(markerlabelstyle)` | Overall marker-label style bundle |
 | `mlabposition(clockposstyle)` | Constant label position for all points |
 | `mlabvposition(varname)` | Observation-specific positions, values `0-12` |
 | `mlabgap(size)` | Distance from marker to label |
 | `mlabangle(anglestyle)` | Text angle |
+| `mlabtextstyle(textstyle)` | Overall text style bundle for marker labels |
 | `mlabsize(textsizestyle)` | Label size |
 | `mlabcolor(colorstyle)` | Label color and opacity |
 | `mlabformat(%fmt)` | Numeric format for numeric labels |
@@ -465,7 +493,23 @@ scatter lexp gnppc if region==2, ///
 
 This is usually better than forcing one `mlabposition()` on every point.
 
-### 5.5 Numeric labels
+### 5.5 Gap, angle, and text-style control
+
+```stata
+// Move labels farther from the marker
+scatter y x, mlabel(name) mlabgap(2)
+
+// Rotate labels
+scatter y x, mlabel(name) mlabangle(45)
+
+// Use bundle style, then override one attribute
+scatter y x, mlabel(name) mlabtextstyle(small) mlabcolor(maroon)
+```
+
+As with `mlabstyle()`, `mlabtextstyle()` is a starting point; specific options such as
+`mlabsize()` and `mlabcolor()` override parts of it.
+
+### 5.6 Numeric labels
 
 ```stata
 // Numeric values as labels
@@ -478,7 +522,7 @@ scatter y x, mlabel(pvalue) mlabformat(%4.2f)
 scatter y x, mlabel(beta) mlabprefix("b = ") mlabsuffix("**")
 ```
 
-### 5.6 Selective labeling patterns
+### 5.7 Selective labeling patterns
 
 ```stata
 // Label only selected observations
@@ -577,6 +621,9 @@ scatter y x if highlight, mlabel(name)
 
 Marker labels work well only when there are few observations or when labels are heavily curated.
 
+This is not just aesthetics; both the official manual and Mitchell repeatedly treat marker labels as a
+small-`N` tool.
+
 ### Trap 4 — `mlabposition()` and `mlabvposition()` are not interchangeable
 
 ```stata
@@ -609,7 +656,17 @@ text(..., box width(85))
 
 This is a Stata textbox width-approximation issue, not necessarily a mistake in your text.
 
-### Trap 7 — `span` matters when notes/captions coexist with legends
+### Trap 7 — `bcolor()` often hides the border
+
+```stata
+// bcolor() sets background and border together
+title("My title", box bcolor(gs14))
+```
+
+If you want a filled box **and** a visibly distinct border, prefer
+`fcolor()` plus `lcolor()` rather than `bcolor()` alone.
+
+### Trap 8 — `span` matters when notes/captions coexist with legends
 
 Without `span`, `note()` and `caption()` often align to the plot region only.
 This can look off when the graph includes a large right-side legend or wide margins.
