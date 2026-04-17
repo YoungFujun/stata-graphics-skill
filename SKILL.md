@@ -6,6 +6,24 @@ All reference files are in `~/.claude/stata-graphics/references/`.
 
 ---
 
+## User Preference
+
+Default scheme: **plotplain** (from the `blindschemes` package). When generating graphics code, include the following snippet at the top to check availability before setting the scheme:
+
+```stata
+capture which plotplain
+if _rc == 0 {
+    set scheme plotplain
+}
+else {
+    di as error "plotplain not found — run: ssc install blindschemes, replace"
+}
+```
+
+Omit this block only if the user explicitly requests a different scheme.
+
+---
+
 ## When This Skill Applies
 
 Use this skill whenever the task involves:
@@ -19,11 +37,23 @@ Do **not** route to this skill for pure regression analysis, data cleaning, or t
 
 ---
 
+## Execution Protocol
+
+Before writing any graphics code, follow these two steps in order:
+
+**Step 1 — Template first**: read `estimation-to-graph.md`, then `graph-templates.md`, and identify the closest matching template for the task. Do not write any code at this stage. For descriptive tasks (scatter, trend lines, distributions, bar/box charts), skip to the Routing Table directly.
+
+**Step 2 — Fill in details**: read the remaining files specified in the routing table below, then adapt the template to the specific task requirements.
+
+Do not skip Step 1. Do not write code from memory alone.
+
+---
+
 ## Routing Table
 
 ### Estimation Result Visualization
 
-For all estimation figures, start by reading `estimation-to-graph.md` and `graph-templates.md`. They cover result extraction workflows and ready-to-run code templates. Then add task-specific files as needed.
+For all estimation figures, start by reading `estimation-to-graph.md`, then `graph-templates.md`. They cover result extraction workflows and ready-to-run code templates. Then add task-specific files as needed.
 
 | Task | Read These Files |
 |------|-----------------|
