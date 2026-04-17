@@ -6,21 +6,17 @@ All reference files are in `~/.claude/stata-graphics/references/`.
 
 ---
 
-## User Preference
+## Scheme Setup
 
-Default scheme: **plotplain** (from the `blindschemes` package). When generating graphics code, include the following snippet at the top to check availability before setting the scheme:
+Set an explicit scheme at the top of graphics code to ensure reproducible appearance. `plotplain` (from `blindschemes`) is a common choice for economics publications:
 
 ```stata
-capture which plotplain
-if _rc == 0 {
-    set scheme plotplain
-}
-else {
-    di as error "plotplain not found — run: ssc install blindschemes, replace"
-}
+set scheme plotplain   // ssc install blindschemes, replace
 ```
 
-Omit this block only if the user explicitly requests a different scheme.
+Use the scheme the user prefers. If no scheme is specified, use Stata's built-in `s1color`.
+
+When a scheme is set, do **not** manually specify colors for individual graph elements (`xline`, `yline`, `rcap`, scatter markers, line plots, etc.) unless the user explicitly requests a specific color. The scheme provides appropriate visual defaults for all elements.
 
 ---
 

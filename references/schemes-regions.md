@@ -220,14 +220,14 @@ Save `.scheme` files to the `PERSONAL` path (e.g., `~/ado/personal/s/`).
 ### Publication-style template
 
 ```stata
-set scheme plotplain
+set scheme plotplain   // scheme provides color defaults; omit per-element colors
 
 twoway ///
-    (rcap ci_hi ci_lo event_time, lcolor(gs8) msize(small)) ///
-    (scatter coef_b event_time, msymbol(circle) mcolor(navy) msize(small)) ///
+    (rcap ci_hi ci_lo event_time, msize(small)) ///
+    (scatter coef_b event_time, msymbol(circle) msize(small)) ///
     , ///
-    yline(0, lcolor(black) lwidth(thin)) ///
-    xline(-0.5, lcolor(gs8) lpattern(dash) lwidth(thin)) ///
+    yline(0, lwidth(thin)) ///
+    xline(-0.5, lpattern(dash) lwidth(thin)) ///
     xlabel(-6(1)6) ylabel(, format(%9.2f) angle(0)) ///
     ytitle("Coefficient") xtitle("Event time (years)") ///
     graphregion(color(white) margin(medium)) ///
@@ -455,9 +455,9 @@ graphregion(fcolor(white) lcolor(white))   // explicit: fill + border both white
 ### Standard economics paper figure
 
 ```stata
-set scheme plotplain
+set scheme plotplain   // scheme provides color defaults; omit per-element colors
 
-twoway (scatter y x, mcolor(navy) msymbol(circle) msize(small)), ///
+twoway (scatter y x, msymbol(circle) msize(small)), ///
     graphregion(color(white)) ///
     plotregion(lcolor(black) margin(zero)) ///
     ytitle("Outcome") xtitle("Treatment intensity") ///
@@ -488,14 +488,14 @@ graph export "figure_hetero.pdf", replace
 ### Monochrome / grayscale (for print)
 
 ```stata
-set scheme s1mono   // or plotplain + grstyle grayscale colors
+set scheme s1mono   // grayscale scheme; add lcolor() only if finer control needed
 
 twoway ///
-    (rcap ci_hi ci_lo t, lcolor(gs4)) ///
-    (scatter coef t, mcolor(gs4) msymbol(circle)), ///
+    (rcap ci_hi ci_lo t) ///
+    (scatter coef t, msymbol(circle)), ///
     graphregion(color(white)) ///
     plotregion(lcolor(black) margin(zero)) ///
-    yline(0, lcolor(gs10) lpattern(dash))
+    yline(0, lpattern(dash))
 ```
 
 ### Quick session setup for an economics paper
