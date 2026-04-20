@@ -5,8 +5,15 @@ This file contains complete, copy-paste-ready code templates for common
 figure types in empirical economics. Each template is annotated with key
 options that are non-obvious or frequently mis-specified.
 
-**To add a new template from a real-world example:** use `/learn` and direct
-it to append to this file, following the format below.
+Templates are scheme-first: they avoid hard-coded colors unless color is needed
+to distinguish groups or show transparent overlap. Add explicit colors only when
+the user requests them or the figure logic requires them.
+
+**To add a new template from a real-world example:** extract the reusable
+plotting pattern from the source code, remove project-specific variable names,
+document the non-obvious options, and append the result in the format below. In
+Claude Code, `/learn` can help automate this step; in other assistants, ask the
+assistant to follow the same extraction workflow manually.
 
 ---
 
@@ -36,15 +43,14 @@ it to append to this file, following the format below.
 * baseline period (-1) should have b=0, ci_lower=0, ci_upper=0
 
 twoway ///
-    (scatter b period, mcolor(navy) msymbol(circle) msize(medium)) ///
-    (rcap ci_lower ci_upper period, lcolor(navy) lwidth(medium)), ///
-    xline(-0.5, lcolor(cranberry) lpattern(dash) lwidth(medium)) ///
-    yline(0, lcolor(black) lwidth(thin)) ///
+    (scatter b period, msymbol(circle) msize(medium)) ///
+    (rcap ci_lower ci_upper period, lwidth(medium)), ///
+    xline(-0.5, lpattern(dash) lwidth(medium)) ///
+    yline(0, lwidth(thin)) ///
     xlabel(-5(1)8) ///
     xtitle("Years Relative to Treatment") ///
     ytitle("Treatment Effect") ///
-    legend(off) ///
-    graphregion(color(white)) bgcolor(white)
+    legend(off)
 ```
 
 **Syntax note:** `rcap ci_lower ci_upper period` — the CI bounds come BEFORE
@@ -65,15 +71,14 @@ the x-variable. Reversed order produces no error but wrong output.
 coefplot, ///
     keep(lead5 lead4 lead3 lead2 lag0 lag1 lag2 lag3 lag4 lag5 lag6 lag7 lag8) ///
     vertical ///
-    yline(0, lcolor(black) lwidth(thin)) ///
-    xline(2.5, lcolor(cranberry) lpattern(dash) lwidth(medium)) ///
+    yline(0, lwidth(thin)) ///
+    xline(4.5, lpattern(dash) lwidth(medium)) ///
     coeflabels( ///
         lead5="-5" lead4="-4" lead3="-3" lead2="-2" ///
         lag0="0" lag1="1" lag2="2" lag3="3" lag4="4" ///
         lag5="5" lag6="6" lag7="7" lag8="8") ///
     xtitle("Periods Relative to Treatment") ///
-    ytitle("Treatment Effect") ///
-    graphregion(color(white)) bgcolor(white)
+    ytitle("Treatment Effect")
 ```
 
 **Note on xline position:** with 4 pre-period dummies (lead5–lead2) shown
@@ -101,13 +106,13 @@ event_plot es_results, ///
         ytitle("Effect (Percentage Points)", size(medlarge)) ///
         xlabel(-5(1)8, labsize(medsmall)) ///
         ylabel(, labsize(medsmall) format(%4.2f) angle(0)) ///
-        xline(-0.5, lcolor(cranberry) lpattern(dash) lwidth(medium)) ///
-        yline(0, lcolor(black) lwidth(thin)) ///
-        graphregion(color(white) margin(medium)) ///
-        plotregion(margin(small)) bgcolor(white) ///
+        xline(-0.5, lpattern(dash) lwidth(medium)) ///
+        yline(0, lwidth(thin)) ///
+        graphregion(margin(medium)) ///
+        plotregion(margin(small)) ///
         title("") legend(off)) ///
-    scatter_opt(mcolor(navy) msize(large) msymbol(circle)) ///
-    rcap_opt(lcolor(navy) lwidth(medthick))
+    scatter_opt(msize(large) msymbol(circle)) ///
+    rcap_opt(lwidth(medthick))
 
 graph export "event_study.png", replace width(3000)
 graph export "event_study.eps", replace
@@ -115,9 +120,9 @@ graph export "event_study.eps", replace
 
 **CI style alternatives:**
 ```stata
-ciplottype(rarea) ... ciopt(color(navy%20))      // shaded area (modern)
+ciplottype(rarea)                                 // shaded area (modern)
 ciplottype(rcap)                                  // range caps (traditional)
-plottype(line) ciplottype(rarea) ciopt(color(navy%15))  // line + shaded area
+plottype(line) ciplottype(rarea)                  // line + shaded area
 ```
 
 ---
@@ -143,9 +148,9 @@ event_plot cs_event, ///
         xtitle("Periods to Treatment") ///
         ytitle("Average Treatment Effect") ///
         xlabel(-5(1)10) ///
-        xline(-0.5, lcolor(cranberry) lpattern(dash)) ///
-        yline(0, lcolor(black)) ///
-        graphregion(color(white)) legend(off))
+        xline(-0.5, lpattern(dash)) ///
+        yline(0) ///
+        legend(off))
 ```
 
 ---
@@ -192,14 +197,14 @@ gen ci_lower = estimate - 1.96 * se
 gen ci_upper = estimate + 1.96 * se
 
 twoway ///
-    (scatter estimate period, mcolor(navy) msymbol(circle)) ///
-    (rcap ci_lower ci_upper period, lcolor(navy)), ///
-    xline(-0.5, lcolor(cranberry) lpattern(dash)) ///
-    yline(0, lcolor(black)) ///
+    (scatter estimate period, msymbol(circle)) ///
+    (rcap ci_lower ci_upper period), ///
+    xline(-0.5, lpattern(dash)) ///
+    yline(0) ///
     xlabel(-3(1)5) ///
     xtitle("Periods Relative to Treatment") ///
     ytitle("Treatment Effect") ///
-    legend(off) graphregion(color(white))
+    legend(off)
 restore
 ```
 
@@ -223,9 +228,8 @@ event_plot twfe cs_event sa, ///
         xtitle("Periods to Treatment") ///
         ytitle("Treatment Effect") ///
         xlabel(-8(2)8) ///
-        xline(-0.5, lcolor(cranberry) lpattern(dash)) ///
-        yline(0, lcolor(black)) ///
-        graphregion(color(white)) ///
+        xline(-0.5, lpattern(dash)) ///
+        yline(0) ///
         legend(order(1 "TWFE" 3 "Callaway-Sant'Anna" 5 "Sun-Abraham") rows(1)))
 
 graph export "method_comparison.png", replace width(3500)
@@ -246,15 +250,14 @@ graph export "method_comparison.png", replace width(3500)
 
 coefplot, ///
     drop(_cons) ///
-    xline(0, lcolor(black) lwidth(thin) lpattern(dash)) ///
-    mcolor(navy) msymbol(circle) msize(medium) ///
-    ciopts(lwidth(medium) lcolor(navy)) levels(95) ///
+    xline(0, lwidth(thin) lpattern(dash)) ///
+    msymbol(circle) msize(medium) ///
+    ciopts(lwidth(medium)) levels(95) ///
     coeflabels( ///
         mpg    = "Miles per Gallon" ///
         weight = "Vehicle Weight" ///
         foreign = "Foreign Origin") ///
-    xtitle("Coefficient (95% CI)") ///
-    graphregion(color(white)) bgcolor(white)
+    xtitle("Coefficient (95% CI)")
 
 graph export "coefplot.pdf", replace
 ```
@@ -278,13 +281,11 @@ coefplot (m1, label("No Controls")) ///
          (m2, label("With Controls")) ///
          (m3, label("Controls + FE")), ///
     drop(_cons) ///
-    xline(0, lcolor(black) lwidth(thin) lpattern(dash)) ///
-    mcolor(navy maroon forest_green) ///
+    xline(0, lwidth(thin) lpattern(dash)) ///
     msymbol(circle square diamond) ///
     ciopts(lwidth(medium)) levels(95) ///
     legend(rows(1) position(6)) ///
-    xtitle("Coefficient (95% CI)") ///
-    graphregion(color(white)) bgcolor(white)
+    xtitle("Coefficient (95% CI)")
 
 graph export "model_comparison.pdf", replace
 ```
@@ -300,10 +301,9 @@ graph export "model_comparison.pdf", replace
 coefplot m1 m2 m3 m4 m5, ///
     drop(_cons) ///
     vertical ///
-    yline(0, lcolor(black) lwidth(thin) lpattern(dash)) ///
-    mcolor(navy) msymbol(circle) ///
-    ytitle("Coefficient (95% CI)") ///
-    graphregion(color(white)) bgcolor(white)
+    yline(0, lwidth(thin) lpattern(dash)) ///
+    msymbol(circle) ///
+    ytitle("Coefficient (95% CI)")
 ```
 
 ---
@@ -322,10 +322,8 @@ margins, dydx(age) at(grade=(8(2)20))
 marginsplot, ///
     xtitle("Years of Education") ///
     ytitle("Marginal Effect of Age on Union Membership") ///
-    yline(0, lcolor(black) lwidth(thin) lpattern(dash)) ///
-    graphregion(color(white)) bgcolor(white) ///
-    plot1opts(lcolor(navy) lwidth(medthick)) ///
-    ci1opts(color(navy%30))
+    yline(0, lwidth(thin) lpattern(dash)) ///
+    plot1opts(lwidth(medthick))
 ```
 
 ---
@@ -358,12 +356,12 @@ forvalues i = 1/`k' {
 }
 
 twoway ///
-    (rarea ci_lower ci_upper age, color(navy%20)) ///
-    (line pred age, lcolor(navy) lwidth(medthick)), ///
+    (rarea ci_lower ci_upper age) ///
+    (line pred age, lwidth(medthick)), ///
     xlabel(20(10)60) ///
     xtitle("Age") ///
     ytitle("Predicted Probability of Union Membership") ///
-    legend(off) graphregion(color(white))
+    legend(off)
 restore
 ```
 
@@ -389,8 +387,8 @@ rdplot outcome running_var, ///
         title("") ///
         xtitle("Running Variable (centered at cutoff)") ///
         ytitle("Outcome") ///
-        xline(0, lcolor(cranberry) lpattern(dash) lwidth(medium)) ///
-        graphregion(color(white)) bgcolor(white) legend(off))
+        xline(0, lpattern(dash) lwidth(medium)) ///
+        legend(off))
 
 graph export "rd_plot.png", replace width(2400) height(1800)
 graph export "rd_plot.eps", replace
@@ -404,7 +402,7 @@ graph export "rd_plot.eps", replace
 
 <!-- Source: treatment-effects.md from dylantmoore/stata-skill -->
 <!-- Scenario: checking common support after PSM or IPW estimation -->
-<!-- Key technique: color(%30) makes both histograms semi-transparent for overlap visibility -->
+<!-- Key technique: explicit transparent colors are used here because overlap visibility requires group contrast -->
 
 ```stata
 * Assumes: ps = propensity score variable, treatment = binary indicator
@@ -415,8 +413,7 @@ twoway ///
     xlabel(0(0.1)1) ///
     xtitle("Propensity Score") ///
     ytitle("Density") ///
-    legend(label(1 "Control") label(2 "Treatment") rows(1)) ///
-    graphregion(color(white))
+    legend(label(1 "Control") label(2 "Treatment") rows(1))
 ```
 
 ---
@@ -499,10 +496,10 @@ replace n = -n          // negate: row 1 → y = -1 (top), row 11 → y = -11 (b
 twoway ///
     (scatter n coef, ///
         mlabel(label) mlabp(12) mlabsize(small) ///
-        msymbol(O) mcolor(green) mfcolor(green) msize(small)) ///
-    (rcap hi lo n, lp(dash) lcolor(red)), ///
+        msymbol(O) msize(small)) ///
+    (rcap hi lo n, lp(dash)), ///
     hori ///
-    xline(0, lp(dash) lcolor(red)) ///
+    xline(0, lp(dash)) ///
     xlabel(-0.1(0.1)0.6, grid) ///
     xscale(alt) ///
     yscale(off) ///
@@ -513,8 +510,7 @@ twoway ///
     text(-4  -0.1 "Panel B: [Description]", place(e) size(small)) ///
     text(-8  -0.1 "Panel C: [Description]", place(e) size(small)) ///
     legend(label(1 "Coefficient") label(2 "95% CI") ///
-        col(1) ring(0) pos(1) size(small)) ///
-    graphregion(color(white))
+        col(1) ring(0) pos(1) size(small))
 
 restore
 ```

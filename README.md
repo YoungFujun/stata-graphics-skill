@@ -8,6 +8,10 @@ A structured knowledge base for AI coding assistants (Claude Code, Codex, etc.) 
 
 ## 中文
 
+### 修改历史
+
+**2026-04-20**：统一模板与 skill 的 scheme-first 配色原则；修正 event-study `coefplot` 模板中的基准线位置；完善 `rcap` 提示、跨助手安装说明和模板学习流程。完整记录见 [`CHANGELOG.md`](CHANGELOG.md)。
+
 ### 这是什么？
 
 当你让 AI 编程助手写 Stata 画图代码时，它依赖训练数据——对于复杂任务（如 event study 图、系数对比图、异质性分析图），这种依赖往往导致反复出错、多轮纠正。这个 skill 改变了这一行为模式。
@@ -78,6 +82,8 @@ cp -r stata-skill/packages/  ~/.claude/stata/packages/
 **2. Stata 14 及以上版本**（本 skill 覆盖的核心语法跨版本稳定）
 
 ### 安装本 skill（Claude Code）
+
+下面以 Claude Code 在 macOS/Linux 上的默认路径为例。若使用 Codex、Cursor、Gemini CLI 或其他能读取本地文件的 AI 助手，只需把 `~/.claude/` 换成对应助手的配置目录，并保持 `SKILL.md` 与 `references/` 的相对结构不变。
 
 **1. 克隆本仓库：**
 
@@ -319,6 +325,13 @@ restore
 
 ## English
 
+### Update History
+
+**2026-04-20**: Aligned templates with scheme-first color guidance; fixed the
+event-study `coefplot` baseline separator; clarified `rcap` guidance,
+cross-assistant installation paths, and the template-learning workflow. See
+[`CHANGELOG.md`](CHANGELOG.md) for the full record.
+
 ### What Is This?
 
 When you ask an AI coding assistant to write Stata graphics code, it relies on training data — which can be inconsistent for complex tasks like event study plots, coefficient comparison figures, or multi-panel heterogeneity analyses. This skill changes that behavior.
@@ -383,6 +396,11 @@ Add to `~/.claude/CLAUDE.md`:
 **2. Stata 14 or later** (core syntax covered is stable across versions)
 
 ### Installation (Claude Code)
+
+The commands below use Claude Code's default macOS/Linux path as an example.
+For Codex, Cursor, Gemini CLI, or any other AI assistant that can read local
+files, replace `~/.claude/` with the assistant's config directory and keep the
+same relative layout between `SKILL.md` and `references/`.
 
 **1. Clone this repository:**
 

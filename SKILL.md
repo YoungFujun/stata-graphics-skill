@@ -97,7 +97,7 @@ These errors recur across task types. Check them before finalizing any code.
 
 1. **Variable order in `twoway`**: always `y x` — write `scatter yvar xvar`, never reversed.
 
-2. **`rcap` CI order**: `rcap hi_var lo_var x_var` — upper bound first, lower bound second. Reversed order produces inverted caps.
+2. **`rcap` CI bounds**: `rcap y1 y2 x_var` takes two CI endpoint variables before the x-variable. Some Stata examples use `hi_var lo_var x_var`; this skill's templates often use `ci_lower ci_upper x_var`. Follow the template's existing endpoint order consistently, and do not replace either endpoint with the point estimate.
 
 3. **`yaxis()`/`xaxis()` are plot-level options**: they go inside the plottype specification (`scatter y x, yaxis(2)`), not at the `twoway` level. Placing them at the `twoway` level causes an error or is silently ignored.
 
