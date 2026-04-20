@@ -10,7 +10,16 @@ A structured knowledge base for AI coding assistants (Claude Code, Codex, etc.) 
 
 ### 修改历史
 
-**2026-04-20**：统一模板与 skill 的 scheme-first 配色原则；修正 event-study `coefplot` 模板中的基准线位置；完善 `rcap` 提示、跨助手安装说明和模板学习流程。完整记录见 [`CHANGELOG.md`](CHANGELOG.md)。
+**2026-04-20**：本次更新重点清理公开版说明和模板一致性：
+
+- 统一 `SKILL.md` 与 `graph-templates.md` 的 scheme-first 配色原则，默认让 Stata scheme 管理颜色。
+- 删除多数模板中的硬编码颜色，只在重叠直方图等确实需要组间区分的场景保留显式透明颜色。
+- 修正 event-study `coefplot` 模板中基准线位置：从 `xline(2.5)` 改为 `xline(4.5)`。
+- 完善 `rcap` 提示，强调 `rcap` 使用两个置信区间端点和一个 x 变量，不应把点估计误放进端点位置。
+- 说明 `~/.claude/` 只是 Claude Code 示例路径；其他 AI 助手可用自己的配置目录并保持同样文件结构。
+- 将 `/learn` 表述为模板学习机制的一种实现方式，其他 AI 助手也可按同样流程从真实代码中提炼新模板。
+
+完整记录见 [`CHANGELOG.md`](CHANGELOG.md)。
 
 ### 这是什么？
 
@@ -327,10 +336,23 @@ restore
 
 ### Update History
 
-**2026-04-20**: Aligned templates with scheme-first color guidance; fixed the
-event-study `coefplot` baseline separator; clarified `rcap` guidance,
-cross-assistant installation paths, and the template-learning workflow. See
-[`CHANGELOG.md`](CHANGELOG.md) for the full record.
+**2026-04-20**: This update improves public documentation and template
+consistency:
+
+- Aligned `SKILL.md` and `graph-templates.md` around scheme-first color
+  guidance, leaving color management to the active Stata scheme by default.
+- Removed hard-coded colors from most templates, while keeping explicit
+  transparent colors where overlap plots require group separation.
+- Fixed the event-study `coefplot` baseline separator from `xline(2.5)` to
+  `xline(4.5)`.
+- Clarified `rcap` guidance: it takes two confidence-interval endpoints and one
+  x variable, and the point estimate should not replace either endpoint.
+- Clarified that `~/.claude/` is an example Claude Code path; other AI
+  assistants can use their own config directories with the same file layout.
+- Reframed `/learn` as one implementation of a broader template-learning
+  workflow that other assistants can follow manually.
+
+See [`CHANGELOG.md`](CHANGELOG.md) for the full record.
 
 ### What Is This?
 
