@@ -239,6 +239,8 @@ translator set Graph2eps cmyk on
 
 The `palettes` package provides access to standard palette collections via the `colorpalette` command. Required for `grstyle set color` and for programmatic color access.
 
+**Note:** `colorpalette` requires both `palettes` and `colrspace` — install both, neither works alone.
+
 ```stata
 ssc install palettes, replace
 ssc install colrspace, replace   // required dependency
